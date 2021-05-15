@@ -1,16 +1,53 @@
 package com.accessibility.stamp.controller;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import com.accessibility.stamp.entity.LogsEntity;
+import com.accessibility.stamp.entity.SiteEntity;
+import com.accessibility.stamp.repository.SiteRepository;
+import com.accessibility.stamp.service.AccessMonitorService;
+import org.json.JSONException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import org.json.JSONObject;
+
+import java.io.IOException;
+
 @RestController
+@RequestMapping("/site")
 public class SiteController {
 
-    @RequestMapping("/site")
-    public ResponseEntity<String> get(){
-        return new ResponseEntity<>("123", HttpStatus.OK);
+    @Autowired
+    private SiteRepository siteRepository;
+
+    @PostMapping("/save")
+    public boolean post(@RequestBody String url) throws JSONException, IOException {
+//        JSONObject json = new JSONObject(url);
+//
+//        SiteEntity site = new SiteEntity();
+//        LogsEntity logs = new LogsEntity();
+//
+//        AccessMonitorService accessMonitorService = new AccessMonitorService();
+//
+//        site.setSite(json.get("site").toString());
+//
+//        String resultValidation = accessMonitorService.getValidation(site.getSite()).toString();
+//        logs.setLogs(resultValidation);
+//        JSONObject validation = new JSONObject(resultValidation);
+//        JSONObject result = new JSONObject(validation.getString("result"));
+//        JSONObject data = new JSONObject(result.getString("data"));
+//
+//        site.setLast_score(data.getString("score"));
+//        site.setValidations(1);
+//        SiteEntity returnSaveSite = siteRepository.save(site);
+//
+//        if(returnSaveSite.getSite() != null){
+//            return true;
+//        }
+
+        return false;
     }
 
 }

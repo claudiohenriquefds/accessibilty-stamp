@@ -31,7 +31,7 @@ public class SiteController {
 //
 //        AccessMonitorService accessMonitorService = new AccessMonitorService();
 //
-//        site.setSite(json.get("site").toString());
+//        site.setUrl(json.get("site").toString());
 //
 //        String resultValidation = accessMonitorService.getValidation(site.getSite()).toString();
 //        logs.setLogs(resultValidation);

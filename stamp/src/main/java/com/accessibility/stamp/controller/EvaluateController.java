@@ -31,7 +31,7 @@ public class EvaluateController {
 
         List<SiteEntity> sites = siteRepository.findAll();
         for(int i = 0; i < sites.toArray().length; i++){
-            logs.setLogs(accessMonitorService.getValidation(sites.get(i).getSite()).toString());
+            logs.setLogs(accessMonitorService.getValidation(sites.get(i).getUrl()).toString());
             int validation = sites.get(i).getValidations();
             sites.get(i).setValidations(validation+1);
             logsRepository.save(logs);

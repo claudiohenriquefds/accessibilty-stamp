@@ -12,7 +12,8 @@ public class SiteEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String site;
+    private String url;
     private Integer validations;
     private String last_score;
+    private Float stampLevel;
 }

@@ -25,12 +25,12 @@ public class StampController {
         SiteEntity siteEntity = siteRepository.findByUrl(url);
         JSONObject jsonResponse = new JSONObject();
 
-        if(siteEntity.getStampLevel() != null){
+        try{
             StampEntity stampEntity = stampRepository.findByStampLevel(siteEntity.getStampLevel());
             jsonResponse.put("success",true);
             jsonResponse.put("image",stampEntity.getImage());
             return jsonResponse.toString();
-        }else{
+        }catch(Exception exception){
             jsonResponse.put("success",false);
             jsonResponse.put("error_message","Selo não encontrado para esse site.");
             return jsonResponse.toString();

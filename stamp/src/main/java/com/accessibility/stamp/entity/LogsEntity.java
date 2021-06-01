@@ -14,6 +14,9 @@ public class LogsEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private Long siteId;
+    private String score;
+
     @Column(columnDefinition = "TEXT")
     private String logs;
 

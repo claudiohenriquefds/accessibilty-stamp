@@ -1,5 +1,9 @@
+/* eslint-disable react/jsx-props-no-spreading */
+/* eslint-disable react/prop-types */
 import React from 'react';
-import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom';
+import {
+ BrowserRouter, Redirect, Route, Switch,
+} from 'react-router-dom';
 
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -7,14 +11,18 @@ import NewSite from './pages/NewSite';
 import Dashboard from './pages/Dashboard';
 import { isAuthenticated } from './services/auth';
 
-const PrivateRoute = ({ component: Component, ...rest }) => (
-    <Route {...rest} render={props =>
-        isAuthenticated() ? (<Component {...props} />) : (<Redirect to={{ pathname: "/", state: { from: props.location } }} />)}
+const PrivateRoute = ({ Component, ...rest }) => (
+    <Route
+      {...rest}
+      render={(props) => (
+                isAuthenticated() ?
+                (<Component {...props} />) :
+                (<Redirect to={{ pathname: '/', state: { from: props.location } }} />)
+            )}
     />
 );
 
-const Routes = () => {
-    return (
+const Routes = () => (
         <BrowserRouter>
             <Switch>
                 <Route path="/" exact component={Login} />
@@ -24,7 +32,6 @@ const Routes = () => {
                 <Route path="*" component={() => <h1>Pagina não encontrada</h1>} />
             </Switch>
         </BrowserRouter>
-    )
-}
+    );
 
 export default Routes;

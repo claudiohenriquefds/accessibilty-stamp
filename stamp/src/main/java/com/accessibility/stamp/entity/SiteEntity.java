@@ -15,6 +15,7 @@ public class SiteEntity {
     private String name;
     private String url;
     private Integer validations = 0;
-    private String last_score;
+    private String lastScore;
     private Float stampLevel;
+    private Boolean runSubsites = true;
 }

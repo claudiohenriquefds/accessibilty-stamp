@@ -1,12 +1,22 @@
 import React from 'react';
-import { useHistory } from 'react-router-dom';
-import { logout } from '../../services/auth';
+import { Switch, Route } from 'react-router-dom';
 
-const Dashboard = () => {
-    const history = useHistory();
-    return(
-        <button type="button" onClick={() => logout(history)}>Sair</button>
-    )
+import Panel from './Panel';
+import History from './History';
+import Sites from './Sites';
+import Stamp from './Stamp';
+
+function Dashboard(props) {
+  const { match } = props;
+
+  return (
+    <Switch>
+      <Route path={`${match.path}/panel`} component={Panel} />
+      <Route path={`${match.path}/history`} component={History} />
+      <Route path={`${match.path}/sites`} component={Sites} />
+      <Route path={`${match.path}/stamp`} component={Stamp} />
+    </Switch>
+  );
 }
 
 export default Dashboard;

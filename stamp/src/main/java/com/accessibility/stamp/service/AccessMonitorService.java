@@ -20,10 +20,12 @@ public class AccessMonitorService{
             URL object_url = new URL("https://accessmonitor.acessibilidade.gov.pt/api/amp/eval/"+url_encoded);
             HttpURLConnection con = (HttpURLConnection) object_url.openConnection();
             con.setRequestMethod("GET");
-            data = new BufferedReader(new InputStreamReader(con.getInputStream()));
-            result = data.readLine();
-            data.close();
-            con.disconnect();
+            if(con.getResponseCode() != 500){
+                data = new BufferedReader(new InputStreamReader(con.getInputStream()));
+                result = data.readLine();
+                data.close();
+                con.disconnect();
+            }
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }

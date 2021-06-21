@@ -16,6 +16,8 @@ public class LogsEntity {
 
     private Long siteId;
     private String score;
+    private Boolean subsite;
+    private String url;
 
     @Column(columnDefinition = "TEXT")
     private String logs;

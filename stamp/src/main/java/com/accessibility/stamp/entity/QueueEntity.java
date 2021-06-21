@@ -13,4 +13,6 @@ public class QueueEntity {
     private Long id;
 
     private String url;
+    private Integer attempts = 0;
+    private Boolean run = true;
 }

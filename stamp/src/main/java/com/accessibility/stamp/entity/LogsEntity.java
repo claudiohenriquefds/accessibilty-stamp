@@ -2,8 +2,10 @@ package com.accessibility.stamp.entity;
 
 
 import lombok.Data;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Data
 @Entity
@@ -15,9 +17,13 @@ public class LogsEntity {
     private Long id;
 
     private Long siteId;
-    private String score;
-    private Boolean subsite;
+    private String score = null;
+    private Boolean subsite = null;
     private String url;
+    private Integer status;
+
+    @CreationTimestamp
+    private Date createdAt;
 
     @Column(columnDefinition = "TEXT")
     private String logs;

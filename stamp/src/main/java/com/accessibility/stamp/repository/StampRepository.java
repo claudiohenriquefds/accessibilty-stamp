@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface StampRepository extends JpaRepository<StampEntity, Long> {
-    StampEntity findByStampLevel(Float stampLevel);
+    StampEntity findByStampLevel(Integer stampLevel);
 }

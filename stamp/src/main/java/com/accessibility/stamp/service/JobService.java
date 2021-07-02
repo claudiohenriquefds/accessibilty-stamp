@@ -1,13 +1,7 @@
 package com.accessibility.stamp.service;
 
-import com.accessibility.stamp.entity.LogsEntity;
-import com.accessibility.stamp.entity.QueueEntity;
-import com.accessibility.stamp.entity.SiteEntity;
-import com.accessibility.stamp.entity.SubsiteEntity;
-import com.accessibility.stamp.repository.LogsRepository;
-import com.accessibility.stamp.repository.QueueRepository;
-import com.accessibility.stamp.repository.SiteRepository;
-import com.accessibility.stamp.repository.SubsiteRepository;
+import com.accessibility.stamp.entity.*;
+import com.accessibility.stamp.repository.*;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -37,14 +31,21 @@ public class JobService {
     @Autowired
     private SubsiteRepository subsiteRepository;
 
+    @Autowired
+    private HistoryRepository historyRepository;
+
     @Scheduled(fixedRate = 60000)
     public void runJob() throws JSONException, IOException {
         List<QueueEntity> queues = queueRepository.findByRun(true);
+        double average = 0;
+        int averageQuantity = 0;
 
         AccessMonitorService accessMonitorService = new AccessMonitorService();
 
         for(int i = 0; i < queues.toArray().length; i++){
             LogsEntity logsEntity = new LogsEntity();
+            HistoryEntity historyEntity = new HistoryEntity();
+
             System.out.println("Avaliando: " + queues.get(i).getUrl());
             String resultValidation = accessMonitorService.getValidation(queues.get(i).getUrl()).toString();
 
@@ -53,14 +54,15 @@ public class JobService {
                 JSONObject result = new JSONObject(validation.getString("result"));
                 JSONObject data = new JSONObject(result.getString("data"));
 
-                logsEntity.setSiteId(queues.get(i).getId());
+                SiteEntity siteEntity = siteRepository.findByUrl(queues.get(i).getUrl());
+
+                logsEntity.setSiteId(siteEntity.getId());
                 logsEntity.setScore(data.getString("score"));
                 logsEntity.setLogs(resultValidation);
                 logsEntity.setSubsite(false);
                 logsEntity.setUrl(queues.get(i).getUrl());
+                logsEntity.setStatus(1);
                 logsRepository.save(logsEntity);
-
-                SiteEntity siteEntity = siteRepository.findByUrl(queues.get(i).getUrl());
 
                 if(siteEntity.getRunSubsites()){
                     int qtdHyperlinks = Integer.parseInt((new JSONObject(data.getString("elems"))).getString("a"));
@@ -76,7 +78,7 @@ public class JobService {
                         String hrefContent = link.attr("href");
                         String urlComplete = queues.get(i).getUrl()+hrefContent;
 
-                        if((!hrefContent.equals("#") || !hrefContent.contains("#")) && (!hrefContent.contains("http") || hrefContent.contains(queues.get(i).getUrl()))){
+                        if(!hrefContent.contains("#") && (!hrefContent.contains("http") || hrefContent.contains(queues.get(i).getUrl()))){
                             System.out.println("Avaliando: "+urlComplete);
                             SubsiteEntity subsiteEntity = subsiteRepository.findSubsiteByUrl(urlComplete);
                             if(subsiteEntity == null){
@@ -99,22 +101,47 @@ public class JobService {
 
                             subsiteRepository.save(subsiteEntity);
 
-                            logsEntitySubsite.setSiteId(queues.get(i).getId());
+                            logsEntitySubsite.setSiteId(siteEntity.getId());
                             logsEntitySubsite.setUrl(urlComplete);
                             logsEntitySubsite.setScore(dataSubsite.getString("score"));
                             logsEntitySubsite.setLogs(resultValidationSubsite);
                             logsEntitySubsite.setSubsite(true);
+                            logsEntitySubsite.setStatus(1);
                             logsRepository.save(logsEntitySubsite);
+                            average += Double.parseDouble(dataSubsite.getString("score"));
+                            averageQuantity += 1;
                         }else{
                             System.out.println("Url invalida: "+urlComplete);
                         }
                     }
                 }
+                average += Double.parseDouble(data.getString("score"));
+                average = average/(averageQuantity+1);
+                int stampLevel = 0;
+                if(average <= 0 && average < 2){
+                    stampLevel = 1;
+                }else if(average >= 2 && average < 4 ){
+                    stampLevel = 2;
+                }else if(average >= 4 && average < 6){
+                    stampLevel = 3;
+                }else if(average >= 6 && average < 8){
+                    stampLevel = 4;
+                }else if(average >= 8 && average <= 10){
+                    stampLevel = 5;
+                }
 
                 siteEntity.setLastScore(data.getString("score"));
                 siteEntity.setValidations(siteEntity.getValidations() + 1);
+                siteEntity.setAverage(average);
+                siteEntity.setStampLevel(stampLevel);
                 siteEntity.setRunSubsites(false);
                 siteRepository.save(siteEntity);
+
+                historyEntity.setSiteId(queues.get(i).getId());
+                historyEntity.setScore(data.getString("score"));
+                historyEntity.setAverage(average);
+                historyEntity.setStatus(1);
+                historyRepository.save(historyEntity);
 
                 queueRepository.delete(queues.get(i));
             }else{
@@ -125,6 +152,17 @@ public class JobService {
                     queueEntity.setAttempts(queueEntity.getAttempts() + 1);
                 }
                 queueRepository.save(queueEntity);
+                logsEntity.setSiteId(queues.get(i).getId());
+                logsEntity.setLogs(resultValidation);
+                logsEntity.setSubsite(false);
+                logsEntity.setUrl(queues.get(i).getUrl());
+                logsEntity.setStatus(2);
+
+                historyEntity.setSiteId(queues.get(i).getId());
+                historyEntity.setStatus(2);
+                historyRepository.save(historyEntity);
+
+                logsRepository.save(logsEntity);
             }
         }
     }

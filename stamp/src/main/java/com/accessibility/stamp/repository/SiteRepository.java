@@ -7,4 +7,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface SiteRepository extends JpaRepository<SiteEntity, Long> {
     SiteEntity findByUrl(String url);
+    SiteEntity findSiteEntityById(Long id);
 }

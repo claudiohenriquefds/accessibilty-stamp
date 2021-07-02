@@ -13,7 +13,7 @@ public class StampEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Float stampLevel;
+    private Integer stampLevel;
 
     @Column(columnDefinition = "TEXT")
     private String image;

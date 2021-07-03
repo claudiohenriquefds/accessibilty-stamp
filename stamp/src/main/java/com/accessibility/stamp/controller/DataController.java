@@ -1,21 +1,12 @@
 package com.accessibility.stamp.controller;
 
-import com.accessibility.stamp.entity.HistoryEntity;
-import com.accessibility.stamp.entity.LogsEntity;
-import com.accessibility.stamp.entity.SiteEntity;
-import com.accessibility.stamp.entity.SubsiteEntity;
-import com.accessibility.stamp.repository.HistoryRepository;
-import com.accessibility.stamp.repository.LogsRepository;
-import com.accessibility.stamp.repository.SiteRepository;
-import com.accessibility.stamp.repository.SubsiteRepository;
+import com.accessibility.stamp.entity.*;
+import com.accessibility.stamp.repository.*;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -37,8 +28,12 @@ public class DataController {
     @Autowired
     private SubsiteRepository subsiteRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @GetMapping
-    public String get(@RequestBody String bodyResquest) throws JSONException {
+    public String get(@RequestBody String bodyResquest, @RequestHeader("Authorization") String authorization) throws JSONException {
+        UserEntity userEntity = userRepository.findByToken(authorization.replaceAll("Bearer ",""));
         JSONObject body = new JSONObject(bodyResquest);
         JSONObject jsonResponse = new JSONObject();
 
@@ -50,9 +45,9 @@ public class DataController {
             Date date = new Date();
             LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 
+            SiteEntity siteEntity = siteRepository.findSiteEntityByIdAndUserId(Long.parseLong(body.get("id").toString()), userEntity.getId());
             List<HistoryEntity> historyListMonth = historyRepository.findBySiteIdAndAndCreatedAt_Month(Long.parseLong(body.get("id").toString()), localDate.getMonthValue());
             List<HistoryEntity> historyListYear = historyRepository.findAllUsingRawQuery(Long.parseLong(body.get("id").toString()));
-            SiteEntity siteEntity = siteRepository.findSiteEntityById(Long.parseLong(body.get("id").toString()));
             List<SubsiteEntity> subsiteEntityList = subsiteRepository.findBySiteId(siteEntity.getId());
 
             jsonDataStructure.put("validations", siteEntity.getValidations());

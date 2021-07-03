@@ -21,7 +21,7 @@ public class SecuryConfig extends WebSecurityConfigurerAdapter {
     public void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.cors().configurationSource(request -> {
                     var cors = new CorsConfiguration();
-                    cors.setAllowedOrigins(List.of("http://localhost:3000"));
+                    cors.setAllowedOrigins(List.of("*"));
                     cors.setAllowedMethods(List.of("GET","POST", "PUT", "DELETE", "OPTIONS"));
                     cors.setAllowedHeaders(List.of("*"));
                     return cors;

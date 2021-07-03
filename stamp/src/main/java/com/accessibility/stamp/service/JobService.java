@@ -49,12 +49,12 @@ public class JobService {
             System.out.println("Avaliando: " + queues.get(i).getUrl());
             String resultValidation = accessMonitorService.getValidation(queues.get(i).getUrl()).toString();
 
+            SiteEntity siteEntity = siteRepository.findByUrl(queues.get(i).getUrl());
+
             if(resultValidation != ""){
                 JSONObject validation = new JSONObject(resultValidation);
                 JSONObject result = new JSONObject(validation.getString("result"));
                 JSONObject data = new JSONObject(result.getString("data"));
-
-                SiteEntity siteEntity = siteRepository.findByUrl(queues.get(i).getUrl());
 
                 logsEntity.setSiteId(siteEntity.getId());
                 logsEntity.setScore(data.getString("score"));
@@ -76,9 +76,14 @@ public class JobService {
                     for (Element link : links) {
                         LogsEntity logsEntitySubsite = new LogsEntity();
                         String hrefContent = link.attr("href");
+
+                        if(hrefContent.contains(queues.get(i).getUrl())){
+                            hrefContent = hrefContent.replaceAll(queues.get(i).getUrl(), "");
+                        }
+
                         String urlComplete = queues.get(i).getUrl()+hrefContent;
 
-                        if(!hrefContent.contains("#") && (!hrefContent.contains("http") || hrefContent.contains(queues.get(i).getUrl()))){
+                        if(!hrefContent.contains("#") && (!hrefContent.contains("http") || hrefContent.contains(queues.get(i).getUrl())) && !urlComplete.equals(queues.get(i).getUrl())){
                             System.out.println("Avaliando: "+urlComplete);
                             SubsiteEntity subsiteEntity = subsiteRepository.findSubsiteByUrl(urlComplete);
                             if(subsiteEntity == null){
@@ -87,29 +92,39 @@ public class JobService {
                             subsiteEntity.setSiteId(siteEntity.getId());
 
                             String resultValidationSubsite = accessMonitorService.getValidation(urlComplete).toString();
-                            JSONObject validationSubsite = new JSONObject(resultValidationSubsite);
-                            JSONObject resultSubsite = new JSONObject(validationSubsite.getString("result"));
-                            JSONObject dataSubsite = new JSONObject(resultSubsite.getString("data"));
 
-                            subsiteEntity.setLastScore(dataSubsite.getString("score"));
-                            subsiteEntity.setUrl(urlComplete);
-                            if(subsiteEntity == null){
-                                subsiteEntity.setValidations(subsiteEntity.getValidations() + 1);
+                            if(resultValidationSubsite != ""){
+                                JSONObject validationSubsite = new JSONObject(resultValidationSubsite);
+                                JSONObject resultSubsite = new JSONObject(validationSubsite.getString("result"));
+                                JSONObject dataSubsite = new JSONObject(resultSubsite.getString("data"));
+
+                                subsiteEntity.setLastScore(dataSubsite.getString("score"));
+                                subsiteEntity.setUrl(urlComplete);
+                                if(subsiteEntity == null){
+                                    subsiteEntity.setValidations(subsiteEntity.getValidations() + 1);
+                                }else{
+                                    subsiteEntity.setValidations(1);
+                                }
+
+                                subsiteRepository.save(subsiteEntity);
+
+                                logsEntitySubsite.setSiteId(siteEntity.getId());
+                                logsEntitySubsite.setUrl(urlComplete);
+                                logsEntitySubsite.setScore(dataSubsite.getString("score"));
+                                logsEntitySubsite.setLogs(resultValidationSubsite);
+                                logsEntitySubsite.setSubsite(true);
+                                logsEntitySubsite.setStatus(1);
+                                logsRepository.save(logsEntitySubsite);
+                                average += Double.parseDouble(dataSubsite.getString("score"));
+                                averageQuantity += 1;
                             }else{
-                                subsiteEntity.setValidations(1);
+                                logsEntitySubsite.setSiteId(siteEntity.getId());
+                                logsEntitySubsite.setUrl(urlComplete);
+                                logsEntitySubsite.setSubsite(true);
+                                logsEntitySubsite.setLogs(resultValidationSubsite);
+                                logsEntitySubsite.setStatus(2);
+                                logsRepository.save(logsEntitySubsite);
                             }
-
-                            subsiteRepository.save(subsiteEntity);
-
-                            logsEntitySubsite.setSiteId(siteEntity.getId());
-                            logsEntitySubsite.setUrl(urlComplete);
-                            logsEntitySubsite.setScore(dataSubsite.getString("score"));
-                            logsEntitySubsite.setLogs(resultValidationSubsite);
-                            logsEntitySubsite.setSubsite(true);
-                            logsEntitySubsite.setStatus(1);
-                            logsRepository.save(logsEntitySubsite);
-                            average += Double.parseDouble(dataSubsite.getString("score"));
-                            averageQuantity += 1;
                         }else{
                             System.out.println("Url invalida: "+urlComplete);
                         }
@@ -137,7 +152,7 @@ public class JobService {
                 siteEntity.setRunSubsites(false);
                 siteRepository.save(siteEntity);
 
-                historyEntity.setSiteId(queues.get(i).getId());
+                historyEntity.setSiteId(siteEntity.getId());
                 historyEntity.setScore(data.getString("score"));
                 historyEntity.setAverage(average);
                 historyEntity.setStatus(1);
@@ -152,13 +167,13 @@ public class JobService {
                     queueEntity.setAttempts(queueEntity.getAttempts() + 1);
                 }
                 queueRepository.save(queueEntity);
-                logsEntity.setSiteId(queues.get(i).getId());
+                logsEntity.setSiteId(siteEntity.getId());
                 logsEntity.setLogs(resultValidation);
                 logsEntity.setSubsite(false);
                 logsEntity.setUrl(queues.get(i).getUrl());
                 logsEntity.setStatus(2);
 
-                historyEntity.setSiteId(queues.get(i).getId());
+                historyEntity.setSiteId(siteEntity.getId());
                 historyEntity.setStatus(2);
                 historyRepository.save(historyEntity);
 

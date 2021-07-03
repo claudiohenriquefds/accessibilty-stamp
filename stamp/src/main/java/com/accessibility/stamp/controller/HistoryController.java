@@ -2,16 +2,15 @@ package com.accessibility.stamp.controller;
 
 import com.accessibility.stamp.entity.HistoryEntity;
 import com.accessibility.stamp.entity.SiteEntity;
+import com.accessibility.stamp.entity.UserEntity;
 import com.accessibility.stamp.repository.HistoryRepository;
 import com.accessibility.stamp.repository.SiteRepository;
+import com.accessibility.stamp.repository.UserRepository;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -25,8 +24,12 @@ public class HistoryController {
     @Autowired
     private SiteRepository siteRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @GetMapping
-    public String getHistory(@RequestBody String bodyRequest) throws JSONException {
+    public String getHistory(@RequestBody String bodyRequest, @RequestHeader("Authorization") String authorization) throws JSONException {
+        UserEntity userEntity = userRepository.findByToken(authorization.replaceAll("Bearer ",""));
         JSONObject body = new JSONObject(bodyRequest);
         JSONObject jsonResponse = new JSONObject();
 
@@ -35,7 +38,7 @@ public class HistoryController {
             List<HistoryEntity> historyEntityList = historyRepository.findBySiteId(Long.parseLong(body.get("id").toString()));
 
             for(int i = 0; i < historyEntityList.toArray().length; i++){
-                SiteEntity siteEntity = siteRepository.findSiteEntityById(historyEntityList.get(i).getSiteId());
+                SiteEntity siteEntity = siteRepository.findSiteEntityByIdAndUserId(historyEntityList.get(i).getSiteId(), userEntity.getId());
                 JSONObject jsonDataHistory = new JSONObject();
                 jsonDataHistory.put("url", siteEntity.getUrl());
                 jsonDataHistory.put("name", siteEntity.getName());

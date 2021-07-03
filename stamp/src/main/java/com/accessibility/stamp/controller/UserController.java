@@ -3,6 +3,7 @@ package com.accessibility.stamp.controller;
 import com.accessibility.stamp.entity.UserEntity;
 import com.accessibility.stamp.repository.UserRepository;
 import com.accessibility.stamp.service.TokenService;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,20 +45,24 @@ public class UserController {
 
             userRepository.save(userEntitySaved);
 
-            jsonResponse.put("success",true);
-            jsonResponse.put("authorization_token",userEntitySaved.getToken());
+            JSONObject dataResponse = new JSONObject();
+            dataResponse.put("authorization_token",userEntitySaved.getToken());
 
-            return jsonResponse.toString();
+            jsonResponse.put("success",true);
+            jsonResponse.put("data",dataResponse.toString());
+            jsonResponse.put("errors", null);
         } catch (JSONException e) {
             jsonResponse.put("success",false);
-            jsonResponse.put("error",e);
-
-            return jsonResponse.toString();
+            jsonResponse.put("data", null);
+            jsonResponse.put("errors", e);
         }
+
+        return jsonResponse.toString();
     }
 
     @PostMapping("/login")
     public String login(@RequestBody String userData) throws JSONException{
+
         JSONObject jsonResponse = new JSONObject();
 
         try {
@@ -67,15 +72,25 @@ public class UserController {
             if(this.passwordEncoder.matches(data.get("password").toString(), user.getPassword())){
                 user.setToken(new TokenService().generateToken(user));
                 userRepository.save(user);
+
+                JSONObject dataResponse = new JSONObject();
+                dataResponse.put("authorization_token",user.getToken());
+
                 jsonResponse.put("success",true);
-                jsonResponse.put("authorization_token",user.getToken());
+                jsonResponse.put("data", dataResponse.toString());
+                jsonResponse.put("errors", null);
             }else{
+                JSONArray errors = new JSONArray();
+                errors.put("Credenciais incorretas.");
+
                 jsonResponse.put("success",false);
-                jsonResponse.put("error_message","Credênciais incorretas.");
+                jsonResponse.put("data", null);
+                jsonResponse.put("errors", errors);
             }
         }catch (JSONException e){
             jsonResponse.put("success",false);
-            jsonResponse.put("error_message",e);
+            jsonResponse.put("data", null);
+            jsonResponse.put("errors", e);
         }
 
         return jsonResponse.toString();

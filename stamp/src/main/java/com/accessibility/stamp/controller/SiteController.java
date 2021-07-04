@@ -89,6 +89,7 @@ public class SiteController {
                     image = stampEntity.getImage();
                 }
 
+                jsonDataSite.put("id",siteList.get(i).getId());
                 jsonDataSite.put("name",siteList.get(i).getName());
                 jsonDataSite.put("url",siteList.get(i).getUrl());
                 jsonDataSite.put("last_score",siteList.get(i).getLastScore());

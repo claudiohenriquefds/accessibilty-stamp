@@ -27,7 +27,7 @@ public class HistoryController {
     @Autowired
     private UserRepository userRepository;
 
-    @GetMapping
+    @PostMapping
     public String getHistory(@RequestBody String bodyRequest, @RequestHeader("Authorization") String authorization) throws JSONException {
         UserEntity userEntity = userRepository.findByToken(authorization.replaceAll("Bearer ",""));
         JSONObject body = new JSONObject(bodyRequest);

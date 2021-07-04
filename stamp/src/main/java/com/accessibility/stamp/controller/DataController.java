@@ -31,8 +31,8 @@ public class DataController {
     @Autowired
     private UserRepository userRepository;
 
-    @GetMapping
-    public String get(@RequestBody String bodyResquest, @RequestHeader("Authorization") String authorization) throws JSONException {
+    @PostMapping
+    public String post(@RequestBody String bodyResquest, @RequestHeader("Authorization") String authorization) throws JSONException {
         UserEntity userEntity = userRepository.findByToken(authorization.replaceAll("Bearer ",""));
         JSONObject body = new JSONObject(bodyResquest);
         JSONObject jsonResponse = new JSONObject();

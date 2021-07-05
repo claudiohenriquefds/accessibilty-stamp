@@ -8,6 +8,7 @@ import {
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
+import Home from './pages/Home';
 import { isAuthenticated } from './services/auth';
 
 const PrivateRoute = ({ Component, ...rest }) => (
@@ -24,7 +25,8 @@ const PrivateRoute = ({ Component, ...rest }) => (
 const Routes = () => (
         <BrowserRouter>
             <Switch>
-                <Route path="/" exact component={Login} />
+                <Route path="/" exact component={Home} />
+                <Route path="/login" exact component={Login} />
                 <Route path="/register" exact component={Register} />
                 <PrivateRoute path="/dashboard" component={Dashboard} />
                 <Route path="*" component={() => <h1>Pagina não encontrada</h1>} />

@@ -384,8 +384,6 @@ const Home = () => (
                 </div>
             </div>
         </div>
-        <script src="http://34.69.36.49:8080/stamp/script.min.js" />
-
     </>
 );
 

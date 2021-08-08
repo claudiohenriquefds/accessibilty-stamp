@@ -32,8 +32,8 @@ public class StampController {
     @GetMapping
     public String getStamp(@RequestParam("url") String url) throws JSONException {
         // Get stamp to site because have error of cors
-        if(url.contains("34.69.36.49:3000")){
-            url = "accessibility-stamp.vercel.app";
+        if(url.equals("http://34.69.36.49:3000")){
+            url = "https://accessibility-stamp.vercel.app";
         }
 
         SiteEntity siteEntity = siteRepository.findByUrl(url);

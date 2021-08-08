@@ -46,7 +46,6 @@ const Navbar = ({ current, filter, search, endpoint }) => {
 
     async function handleSelect(e) {
         setSelected(e);
-        console.log(endpoint);
         const response = await api.post(endpoint, { id: e.id });
         if (response.data.success) {
             setData(response.data);

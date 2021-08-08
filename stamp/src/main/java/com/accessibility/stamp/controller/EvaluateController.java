@@ -22,7 +22,7 @@ public class EvaluateController {
     @Autowired
     private QueueRepository queueRepository;
 
-    @Scheduled(fixedRate = 60*60*24000000)// every 24 hours 86400000000 milliseconds
+    //@Scheduled(fixedRate = 60*60*24000000)// every 24 hours 86400000000 milliseconds
     @GetMapping
     public boolean evalue(){
         List<SiteEntity> siteList = siteRepository.findAll();

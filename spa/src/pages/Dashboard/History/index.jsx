@@ -14,6 +14,10 @@ const History = () => {
         return classes.filter(Boolean).join(' ');
     }
 
+    if(data === null || typeof data.data.history_month !== 'undefined'){
+        data = null;
+    }
+
     if (data != null) {
         data = JSON.parse(data.data);
         // eslint-disable-next-line array-callback-return

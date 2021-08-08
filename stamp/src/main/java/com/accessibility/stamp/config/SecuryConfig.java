@@ -33,6 +33,7 @@ public class SecuryConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, "/user/register").permitAll()
                 .antMatchers(HttpMethod.GET, "/stamp").permitAll()
                 .antMatchers(HttpMethod.GET, "/stamp/script.min.js").permitAll()
+                .antMatchers(HttpMethod.GET, "/evaluate").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(new JwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);

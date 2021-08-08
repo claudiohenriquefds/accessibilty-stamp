@@ -15,6 +15,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+import org.springframework.util.FileCopyUtils; 
+import java.nio.charset.StandardCharsets;
 
 @RestController
 @RequestMapping("/stamp")
@@ -64,11 +67,19 @@ public class StampController {
     
     @GetMapping(value = "/script.min.js", produces="text/javascript; charset=utf-8")
     public String getCDN() throws IOException {
-        // File file = ResourceUtils.getFile("classpath:script.min.js");
+        // File file = ResourceUtils.getFile("classpath*:script.min.js");
         // String content = new String(Files.readAllBytes(file.toPath()));
+        String content = "";
+        ClassPathResource cpr = new ClassPathResource("script.min.js");
+        try {
+            byte[] bdata = FileCopyUtils.copyToByteArray(cpr.getInputStream());
+            content = new String(bdata, StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            System.out.println(e);
+        }
 
-        File resource = new ClassPathResource("script.min.js").getFile();
-		String content = new String(Files.readAllBytes(resource.toPath()));
+        // File resource = new ClassPathResource("script.min.js").getFile();
+		// String content = new String(Files.readAllBytes(resource.toPath()));
     
         return content;
     }

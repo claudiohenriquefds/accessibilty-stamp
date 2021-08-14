@@ -1,27 +1,21 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext } from 'react';
 
 import Navbar from '../../../components/Navbar';
-import PanelContext from '../../../context/PanelContext';
+import HistoryContext from '../../../context/HistoryContext';
 
 import logo from '../../../assets/Logo_indigo.svg';
 
 const History = () => {
-    let { data } = useContext(PanelContext);
-
-    // eslint-disable-next-line prefer-const
-    let sites = [];
-
-    useEffect(() => {
-        sites = [];
-    },[data])
+    let { data } = useContext(HistoryContext);
+    const { sites, setSitesHistory } = useContext(HistoryContext);
 
     function classNames(...classes) {
         return classes.filter(Boolean).join(' ');
     }
 
-    if(data === null || typeof data.data.history_month !== 'undefined'){
-        data = null;
-    }
+    // if(data === null || typeof data.data.history_month !== 'undefined'){
+    //     data = null;
+    // }
 
     if (data != null) {
         data = JSON.parse(data.data);
@@ -45,14 +39,14 @@ const History = () => {
                 lastScore = element.last_score;
             }
 
-            sites.push({
+            setSitesHistory([...sites, sites.push({
                 name: 'Acesso para todos',
                 last_score: lastScore,
                 grade_average: average,
                 status,
                 url: element.url,
                 date: element.date,
-            });
+            })]);
         });
 
         return (

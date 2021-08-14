@@ -9,11 +9,11 @@ import PanelContext from '../../../context/PanelContext';
 import logo from '../../../assets/Logo_indigo.svg';
 
 const Panel = () => {
-    let { data } = useContext(PanelContext);
+    const { data } = useContext(PanelContext);
 
-    if(data === null || typeof data.data === 'string'){
-        data = null;
-    }
+    // if(data === null || typeof data.data === 'string'){
+    //     data = null;
+    // }
 
     if (data != null) {
         const labelsMonth = [];

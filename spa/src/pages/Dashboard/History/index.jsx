@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 
 import Navbar from '../../../components/Navbar';
 import PanelContext from '../../../context/PanelContext';
@@ -8,7 +8,7 @@ import logo from '../../../assets/Logo_indigo.svg';
 const History = () => {
     let { data } = useContext(PanelContext);
 
-    const sites = [];
+    const [sites, setSites] = useState();
 
     function classNames(...classes) {
         return classes.filter(Boolean).join(' ');
@@ -40,14 +40,14 @@ const History = () => {
                 lastScore = element.last_score;
             }
 
-            sites.push({
+            setSites([...sites, {
                 name: 'Acesso para todos',
                 last_score: lastScore,
                 grade_average: average,
                 status,
                 url: element.url,
                 date: element.date,
-            });
+            }]);
         });
 
         return (

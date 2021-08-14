@@ -1,4 +1,4 @@
-import React, { useContext, useState, useCallback } from 'react';
+import React, { useContext } from 'react';
 
 import Navbar from '../../../components/Navbar';
 import PanelContext from '../../../context/PanelContext';
@@ -8,15 +8,12 @@ import logo from '../../../assets/Logo_indigo.svg';
 const History = () => {
     let { data } = useContext(PanelContext);
 
-    const [sites, setSites] = useState([]);
+    // eslint-disable-next-line prefer-const
+    let sites = [];
 
     function classNames(...classes) {
         return classes.filter(Boolean).join(' ');
     }
-
-    const mountHistory = useCallback((objData) => {
-        setSites([...sites, objData]);
-    }, [sites]);
 
     if(data === null || typeof data.data.history_month !== 'undefined'){
         data = null;
@@ -44,14 +41,14 @@ const History = () => {
                 lastScore = element.last_score;
             }
 
-            mountHistory({
+            sites.push({
                 name: 'Acesso para todos',
                 last_score: lastScore,
                 grade_average: average,
                 status,
                 url: element.url,
                 date: element.date,
-            })
+            });
         });
 
         return (

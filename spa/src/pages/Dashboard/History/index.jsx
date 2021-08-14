@@ -8,7 +8,7 @@ import logo from '../../../assets/Logo_indigo.svg';
 const History = () => {
     let { data } = useContext(PanelContext);
 
-    const [sites, setSites] = useState();
+    const [sites, setSites] = useState([]);
 
     function classNames(...classes) {
         return classes.filter(Boolean).join(' ');

@@ -78,7 +78,7 @@ const History = () => {
                                                     </td>
                                                     <td className="px-6 py-4 whitespace-nowrap">
                                                         <div className="text-sm text-gray-900">
-                                                            {site.average.toFixed(1) !== null ? site.average.toFixed(1) : "-"}
+                                                            {site.average !== null ? site.average.toFixed(1) : "-"}
                                                         </div>
                                                     </td>
                                                     <td className="px-6 py-4 whitespace-nowrap">

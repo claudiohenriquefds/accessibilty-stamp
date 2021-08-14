@@ -14,7 +14,7 @@ import HistoryContext from '../../context/HistoryContext';
 
 const Navbar = ({ current, filter, search, endpoint }) => {
     const { setDataPanel } = useContext(PanelContext);
-    const { setHistory, setSitesHistory } = useContext(HistoryContext);
+    const { setDataHistory, setSitesHistory } = useContext(HistoryContext);
     const history = useHistory();
 
     const [sites, setSites] = useState([{ id: 0, name: 'Selecione uma opção.' }]);
@@ -55,7 +55,7 @@ const Navbar = ({ current, filter, search, endpoint }) => {
             }
 
             if(current === 'history'){
-                setHistory(response.data);
+                setDataHistory(response.data);
                 setSitesHistory([]);
             }
 

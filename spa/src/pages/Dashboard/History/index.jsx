@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useCallback } from 'react';
 
 import Navbar from '../../../components/Navbar';
 import PanelContext from '../../../context/PanelContext';
@@ -40,14 +40,16 @@ const History = () => {
                 lastScore = element.last_score;
             }
 
-            setSites([...sites, {
-                name: 'Acesso para todos',
-                last_score: lastScore,
-                grade_average: average,
-                status,
-                url: element.url,
-                date: element.date,
-            }]);
+            (useCallback(() => {
+                setSites([...sites, {
+                    name: 'Acesso para todos',
+                    last_score: lastScore,
+                    grade_average: average,
+                    status,
+                    url: element.url,
+                    date: element.date,
+                }]);
+            }, [sites]))();
         });
 
         return (

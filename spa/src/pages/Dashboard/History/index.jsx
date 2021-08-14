@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useCallback } from 'react';
 
 import Navbar from '../../../components/Navbar';
 import HistoryContext from '../../../context/HistoryContext';
@@ -16,6 +16,10 @@ const History = () => {
     // if(data === null || typeof data.data.history_month !== 'undefined'){
     //     data = null;
     // }
+
+    const callbackMemorized = useCallback((object) => {
+        setSitesHistory([...sitesHistory, object]);
+    }, [sitesHistory]);
 
     if (dataHistory != null) {
         dataHistory = JSON.parse(dataHistory.data);
@@ -39,14 +43,14 @@ const History = () => {
                 lastScore = element.last_score;
             }
 
-            setSitesHistory([...sitesHistory, {
+            callbackMemorized({
                 name: 'Acesso para todos',
                 last_score: lastScore,
                 grade_average: average,
                 status,
                 url: element.url,
                 date: element.date,
-            }]);
+            });
         });
 
         return (

@@ -1,4 +1,4 @@
-import React, { useContext, useCallback } from 'react';
+import React, { useContext, useCallback, useRef, useEffect } from 'react';
 
 import Navbar from '../../../components/Navbar';
 import HistoryContext from '../../../context/HistoryContext';
@@ -6,6 +6,14 @@ import HistoryContext from '../../../context/HistoryContext';
 import logo from '../../../assets/Logo_indigo.svg';
 
 const History = () => {
+
+    const mounted = useRef(false);
+
+    useEffect(() => {
+            mounted.current = true;
+            return () => { mounted.current = false; };
+    }, []);
+
     let { dataHistory } = useContext(HistoryContext);
     const { sitesHistory, setSitesHistory } = useContext(HistoryContext);
 
@@ -18,7 +26,9 @@ const History = () => {
     // }
 
     const callbackMemorized = useCallback((object) => {
-        setSitesHistory([...sitesHistory, object]);
+        if (mounted.current) {
+            setSitesHistory([...sitesHistory, object]);
+        }
     }, [sitesHistory]);
 
     if (dataHistory != null) {

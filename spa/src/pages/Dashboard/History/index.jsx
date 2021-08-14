@@ -8,9 +8,6 @@ import logo from '../../../assets/Logo_indigo.svg';
 const History = () => {
     let { data } = useContext(PanelContext);
 
-    // eslint-disable-next-line prefer-const
-    let sites = [];
-
     function classNames(...classes) {
         return classes.filter(Boolean).join(' ');
     }
@@ -20,6 +17,8 @@ const History = () => {
     }
 
     if (data != null) {
+        // eslint-disable-next-line prefer-const
+        let sites = [];
         data = JSON.parse(data.data);
         // eslint-disable-next-line array-callback-return
         data.map((element) => {

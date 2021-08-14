@@ -5,10 +5,10 @@ const PanelContext = createContext({
 })
 
 export const PanelProvider = ({ children }) => {
-    const [data, setData] = useState(null)
+    const [dataPanel, setDataPanel] = useState(null)
 
     return (
-        <PanelContext.Provider value={{ data, setData }}>
+        <PanelContext.Provider value={{ dataPanel, setDataPanel }}>
             {children}
         </PanelContext.Provider>
     )

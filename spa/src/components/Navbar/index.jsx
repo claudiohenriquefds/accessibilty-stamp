@@ -13,7 +13,7 @@ import PanelContext from '../../context/PanelContext';
 import HistoryContext from '../../context/HistoryContext';
 
 const Navbar = ({ current, filter, search, endpoint }) => {
-    const { setData } = useContext(PanelContext);
+    const { setDataPanel } = useContext(PanelContext);
     const { setHistory, setSitesHistory } = useContext(HistoryContext);
     const history = useHistory();
 
@@ -51,7 +51,7 @@ const Navbar = ({ current, filter, search, endpoint }) => {
         const response = await api.post(endpoint, { id: e.id });
         if (response.data.success) {
             if(current === 'panel'){
-                setData(response.data);
+                setDataPanel(response.data);
             }
 
             if(current === 'history'){

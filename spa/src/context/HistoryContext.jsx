@@ -5,12 +5,12 @@ const HistoryContext = createContext({
 })
 
 export const HistoryProvider = ({ children }) => {
-    const [history, setHistory] = useState(null)
+    const [dataHistory, setDataHistory] = useState(null)
     // eslint-disable-next-line prefer-const
-    let [sites, setSitesHistory] = useState([])
+    let [sitesHistory, setSitesHistory] = useState([])
 
     return (
-        <HistoryContext.Provider value={{ history, setHistory, sites, setSitesHistory }}>
+        <HistoryContext.Provider value={{ dataHistory, setDataHistory, sitesHistory, setSitesHistory }}>
             {children}
         </HistoryContext.Provider>
     )

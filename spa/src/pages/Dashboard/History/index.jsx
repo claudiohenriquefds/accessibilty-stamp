@@ -6,8 +6,8 @@ import HistoryContext from '../../../context/HistoryContext';
 import logo from '../../../assets/Logo_indigo.svg';
 
 const History = () => {
-    let { data } = useContext(HistoryContext);
-    const { sites, setSitesHistory } = useContext(HistoryContext);
+    let { dataHistory } = useContext(HistoryContext);
+    const { sitesHistory, setSitesHistory } = useContext(HistoryContext);
 
     function classNames(...classes) {
         return classes.filter(Boolean).join(' ');
@@ -17,10 +17,10 @@ const History = () => {
     //     data = null;
     // }
 
-    if (data != null) {
-        data = JSON.parse(data.data);
+    if (dataHistory != null) {
+        dataHistory = JSON.parse(dataHistory.data);
         // eslint-disable-next-line array-callback-return
-        data.map((element) => {
+        dataHistory.map((element) => {
             let status = '';
             let average = '-';
             let lastScore = '-';
@@ -39,14 +39,14 @@ const History = () => {
                 lastScore = element.last_score;
             }
 
-            setSitesHistory([...sites, sites.push({
+            setSitesHistory([...sitesHistory, {
                 name: 'Acesso para todos',
                 last_score: lastScore,
                 grade_average: average,
                 status,
                 url: element.url,
                 date: element.date,
-            })]);
+            }]);
         });
 
         return (
@@ -93,7 +93,7 @@ const History = () => {
                                             </tr>
                                         </thead>
                                         <tbody className="bg-white divide-y divide-gray-200">
-                                            {sites.map((site) => (
+                                            {sitesHistory.map((site) => (
                                                 <tr key={site.url}>
                                                     <td className="px-6 py-4 whitespace-nowrap">
                                                         <div className="flex items-center">

@@ -55,6 +55,7 @@ const Navbar = ({ current, filter, search, endpoint }) => {
             }
 
             if(current === 'history'){
+                setDataHistory(null);
                 setDataHistory(response.data);
             }
 

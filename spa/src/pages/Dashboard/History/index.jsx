@@ -73,12 +73,12 @@ const History = () => {
                                                     </td>
                                                     <td className="px-6 py-4 whitespace-nowrap">
                                                         <div className="text-sm text-gray-900">
-                                                            {site.last_score !== null ? site.last_score : "-"}
+                                                            {typeof site.last_score !== 'undefined' ? site.last_score : "-"}
                                                         </div>
                                                     </td>
                                                     <td className="px-6 py-4 whitespace-nowrap">
                                                         <div className="text-sm text-gray-900">
-                                                            {site.average !== null ? site.average : "-"}
+                                                            {typeof site.average !== 'undefined' ? site.average.toFixed(1) : "-"}
                                                         </div>
                                                     </td>
                                                     <td className="px-6 py-4 whitespace-nowrap">
@@ -88,7 +88,7 @@ const History = () => {
                                                     </td>
                                                     <td className="px-6 py-4 whitespace-nowrap">
                                                         <div className="text-sm text-gray-900">
-                                                            {site.date !== null ? site.date :  "-"}
+                                                            {typeof site.date !== 'undefined' ? site.date :  "-"}
                                                         </div>
                                                     </td>
                                                 </tr>

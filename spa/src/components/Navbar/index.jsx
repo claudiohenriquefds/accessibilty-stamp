@@ -55,8 +55,8 @@ const Navbar = ({ current, filter, search, endpoint }) => {
             }
 
             if(current === 'history'){
-                setDataHistory(response.data);
                 setSitesHistory([]);
+                setDataHistory(response.data);
             }
 
         }

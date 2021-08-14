@@ -14,6 +14,10 @@ const History = () => {
         return classes.filter(Boolean).join(' ');
     }
 
+    const mountHistory = useCallback((objData) => {
+        setSites([...sites, objData]);
+    }, [sites]);
+
     if(data === null || typeof data.data.history_month !== 'undefined'){
         data = null;
     }
@@ -40,16 +44,14 @@ const History = () => {
                 lastScore = element.last_score;
             }
 
-            (useCallback(() => {
-                setSites([...sites, {
-                    name: 'Acesso para todos',
-                    last_score: lastScore,
-                    grade_average: average,
-                    status,
-                    url: element.url,
-                    date: element.date,
-                }]);
-            }, [sites]))();
+            mountHistory({
+                name: 'Acesso para todos',
+                last_score: lastScore,
+                grade_average: average,
+                status,
+                url: element.url,
+                date: element.date,
+            })
         });
 
         return (

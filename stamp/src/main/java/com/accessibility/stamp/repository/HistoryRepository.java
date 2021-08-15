@@ -16,4 +16,6 @@ public interface HistoryRepository extends JpaRepository<HistoryEntity, Long> {
     List<HistoryEntity> findAllUsingRawQuery(Long siteId);
 
     List<HistoryEntity> findBySiteId(Long siteId);
+
+    List<HistoryEntity> findBySiteIdAndOrderByCreatedAt(Long siteId);
 }

@@ -3,9 +3,11 @@ package com.accessibility.stamp.controller;
 import com.accessibility.stamp.entity.HistoryEntity;
 import com.accessibility.stamp.entity.SiteEntity;
 import com.accessibility.stamp.entity.StampEntity;
+import com.accessibility.stamp.entity.SubsiteEntity;
 import com.accessibility.stamp.repository.HistoryRepository;
 import com.accessibility.stamp.repository.StampRepository;
 import com.accessibility.stamp.repository.SiteRepository;
+import com.accessibility.stamp.repository.SubsiteRepository;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +32,9 @@ public class StampController {
 
     @Autowired
     private HistoryRepository historyRepository;
+
+    @Autowired
+    private SubsiteRepository subsiteRepository;
 
     @GetMapping
     public String getStamp(@RequestParam("url") String url) throws JSONException {
@@ -97,6 +102,7 @@ public class StampController {
             JSONObject jsonData = new JSONObject();
             SiteEntity siteEntity = siteRepository.findSiteEntityById(Long.parseLong(id));
             List<HistoryEntity> historyEntityList = historyRepository.findBySiteIdOrderByCreatedAt(siteEntity.getId());
+            List<SubsiteEntity> subsiteEntityList = subsiteRepository.findBySiteId(siteEntity.getId());
             StampEntity stampEntity = stampRepository.findByStampLevel(siteEntity.getStampLevel());
 
             if(stampEntity == null){
@@ -109,7 +115,7 @@ public class StampController {
             jsonData.put("average", siteEntity.getAverage());
             jsonData.put("validations", siteEntity.getValidations());
             jsonData.put("last_validate", historyEntityList.get(0).getCreatedAt());
-            jsonData.put("quantity", historyEntityList.toArray().length);
+            jsonData.put("quantity", subsiteEntityList.toArray().length);
             jsonData.put("stamp", stampEntity.getImage());
 
             jsonResponse.put("success",true);

@@ -41,7 +41,7 @@ public class StampController {
         try{
             StampEntity stampEntity = stampRepository.findByStampLevel(siteEntity.getStampLevel());
 
-            if(stampEntity.getId() == null){
+            if(stampEntity == null){
                 stampEntity = stampRepository.findByStampLevel(1);
             }
 

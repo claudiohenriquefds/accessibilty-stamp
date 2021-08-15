@@ -7,6 +7,7 @@ import {
 
 import Login from './pages/Login';
 import Register from './pages/Register';
+import Info from './pages/Info';
 import Dashboard from './pages/Dashboard';
 import Home from './pages/Home';
 import { isAuthenticated } from './services/auth';
@@ -28,6 +29,7 @@ const Routes = () => (
                 <Route path="/" exact component={Home} />
                 <Route path="/login" exact component={Login} />
                 <Route path="/register" exact component={Register} />
+                <Route path="/info/:id" exact component={Info} />
                 <PrivateRoute path="/dashboard" component={Dashboard} />
                 <Route path="*" component={() => <h1>Pagina não encontrada</h1>} />
             </Switch>

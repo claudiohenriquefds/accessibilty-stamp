@@ -96,7 +96,7 @@ public class StampController {
         try{
             JSONObject jsonData = new JSONObject();
             SiteEntity siteEntity = siteRepository.findSiteEntityById(Long.parseLong(id));
-            List<HistoryEntity> historyEntityList = historyRepository.findBySiteIdAndOrderByCreatedAt(siteEntity.getId());
+            List<HistoryEntity> historyEntityList = historyRepository.findBySiteIdOrderByCreatedAt(siteEntity.getId());
             StampEntity stampEntity = stampRepository.findByStampLevel(siteEntity.getStampLevel());
 
             if(stampEntity == null){

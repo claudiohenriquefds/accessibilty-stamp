@@ -1,7 +1,5 @@
 import jwt from 'jsonwebtoken';
 
-require('dotenv').config();
-
 export const TOKEN_KEY = 'access_token';
 export const isAuthenticated = () => jwt.decode(localStorage.getItem(TOKEN_KEY), {complete: true}).payload.exp < (new Date()).getTime();
 export const getToken = () => localStorage.getItem(TOKEN_KEY);

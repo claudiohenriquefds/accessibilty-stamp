@@ -41,6 +41,10 @@ public class StampController {
         try{
             StampEntity stampEntity = stampRepository.findByStampLevel(siteEntity.getStampLevel());
 
+            if(stampEntity.getId() == null){
+                stampEntity = stampRepository.findByStampLevel(1);
+            }
+
             JSONObject jsonData = new JSONObject();
             jsonData.put("image", stampEntity.getImage());
             jsonData.put("site_id", siteEntity.getId());

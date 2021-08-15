@@ -87,6 +87,9 @@ public class SiteController {
                 String image = "";
                 if(stampEntity != null){
                     image = stampEntity.getImage();
+                }else{
+                    stampEntity = stampRepository.findByStampLevel(1);
+                    image = stampEntity.getImage();
                 }
 
                 jsonDataSite.put("id",siteList.get(i).getId());

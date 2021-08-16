@@ -1,55 +1,18 @@
 import React, { useContext } from 'react';
 
 import Navbar from '../../../components/Navbar';
-import PanelContext from '../../../context/PanelContext';
+import HistoryContext from '../../../context/HistoryContext';
 
 import logo from '../../../assets/Logo_indigo.svg';
 
 const History = () => {
-    let { data } = useContext(PanelContext);
-
-    const sites = [];
+    const { dataHistory } = useContext(HistoryContext);
 
     function classNames(...classes) {
         return classes.filter(Boolean).join(' ');
     }
 
-    if(data === null || typeof data.data.history_month !== 'undefined'){
-        data = null;
-    }
-
-    if (data != null) {
-        data = JSON.parse(data.data);
-        // eslint-disable-next-line array-callback-return
-        data.map((element) => {
-            let status = '';
-            let average = '-';
-            let lastScore = '-';
-
-            if (element.status === 1) {
-                status = { title: 'Avaliação concluida', class: 'bg-green-100 text-green-800' };
-            } else if (element.status === 2) {
-                status = { title: 'Falha na avaliação', class: 'bg-red-100 text-red-800' };
-            }
-
-            if (element.average != null) {
-                average = element.average.toFixed(1);
-            }
-
-            if (element.last_score != null) {
-                lastScore = element.last_score;
-            }
-
-            sites.push({
-                name: 'Acesso para todos',
-                last_score: lastScore,
-                grade_average: average,
-                status,
-                url: element.url,
-                date: element.date,
-            });
-        });
-
+    if (dataHistory != null) {
         return (
             <>
                 <Navbar current="history" filter="true" endpoint="history" />
@@ -94,7 +57,7 @@ const History = () => {
                                             </tr>
                                         </thead>
                                         <tbody className="bg-white divide-y divide-gray-200">
-                                            {sites.map((site) => (
+                                            {JSON.parse(dataHistory.data).map((site) => (
                                                 <tr key={site.url}>
                                                     <td className="px-6 py-4 whitespace-nowrap">
                                                         <div className="flex items-center">
@@ -110,22 +73,22 @@ const History = () => {
                                                     </td>
                                                     <td className="px-6 py-4 whitespace-nowrap">
                                                         <div className="text-sm text-gray-900">
-                                                            {site.last_score}
+                                                            {typeof site.last_score !== 'undefined' ? site.last_score : "-"}
                                                         </div>
                                                     </td>
                                                     <td className="px-6 py-4 whitespace-nowrap">
                                                         <div className="text-sm text-gray-900">
-                                                            {site.grade_average}
+                                                            {typeof site.average !== 'undefined' ? site.average.toFixed(1) : "-"}
                                                         </div>
                                                     </td>
                                                     <td className="px-6 py-4 whitespace-nowrap">
-                                                        <span className={classNames("px-2 inline-flex text-xs leading-5 font-semibold rounded-full", site.status.class)}>
-                                                            {site.status.title}
+                                                        <span className={classNames("px-2 inline-flex text-xs leading-5 font-semibold rounded-full", site.status === 1 ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800")}>
+                                                            {site.status === 1 ? "Avaliação concluida" : "Falha na avaliação"}
                                                         </span>
                                                     </td>
                                                     <td className="px-6 py-4 whitespace-nowrap">
                                                         <div className="text-sm text-gray-900">
-                                                            {site.date}
+                                                            {typeof site.date !== 'undefined' ? site.date :  "-"}
                                                         </div>
                                                     </td>
                                                 </tr>

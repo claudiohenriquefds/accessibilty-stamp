@@ -60,8 +60,8 @@ public class DataController {
 
                 jsonDataHistory.put("name", siteEntity.getName());
                 jsonDataHistory.put("url", siteEntity.getUrl());
-                jsonDataHistory.put("last_score", historyListMonth.get(i).getScore());
-                jsonDataHistory.put("average", historyListMonth.get(i).getScore());
+                jsonDataHistory.put("last_score", historyListMonth.get(i).getScore() != null ? historyListMonth.get(i).getScore() : 0);
+                jsonDataHistory.put("average", historyListMonth.get(i).getScore() != null ? historyListMonth.get(i).getScore() : 0);
                 jsonDataHistory.put("status", historyListMonth.get(i).getStatus());
                 jsonDataHistory.put("date", historyListMonth.get(i).getCreatedAt());
                 jsonDataMonth.put(jsonDataHistory);
@@ -72,7 +72,7 @@ public class DataController {
             for(int i = 0; i < historyListYear.toArray().length; i++){
                 JSONObject jsonDataHistory = new JSONObject();
 
-                jsonDataHistory.put("average", historyListYear.get(i).getAverage());
+                jsonDataHistory.put("average", historyListYear.get(i).getAverage() != null ? historyListYear.get(i).getAverage() : 0);
                 jsonDataHistory.put("date", historyListYear.get(i).getCreatedAt());
                 jsonDataYear.put(jsonDataHistory);
             }

@@ -1,23 +1,24 @@
 package com.accessibility.stamp.controller;
 
+import com.accessibility.stamp.entity.HistoryEntity;
 import com.accessibility.stamp.entity.SiteEntity;
 import com.accessibility.stamp.entity.StampEntity;
+import com.accessibility.stamp.entity.SubsiteEntity;
+import com.accessibility.stamp.repository.HistoryRepository;
 import com.accessibility.stamp.repository.StampRepository;
 import com.accessibility.stamp.repository.SiteRepository;
+import com.accessibility.stamp.repository.SubsiteRepository;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 import org.springframework.util.FileCopyUtils; 
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 @RestController
 @RequestMapping("/stamp")
@@ -28,6 +29,12 @@ public class StampController {
 
     @Autowired
     private SiteRepository siteRepository;
+
+    @Autowired
+    private HistoryRepository historyRepository;
+
+    @Autowired
+    private SubsiteRepository subsiteRepository;
 
     @GetMapping
     public String getStamp(@RequestParam("url") String url) throws JSONException {
@@ -40,6 +47,10 @@ public class StampController {
 
         try{
             StampEntity stampEntity = stampRepository.findByStampLevel(siteEntity.getStampLevel());
+
+            if(stampEntity == null){
+                stampEntity = stampRepository.findByStampLevel(1);
+            }
 
             JSONObject jsonData = new JSONObject();
             jsonData.put("image", stampEntity.getImage());
@@ -90,10 +101,22 @@ public class StampController {
         try{
             JSONObject jsonData = new JSONObject();
             SiteEntity siteEntity = siteRepository.findSiteEntityById(Long.parseLong(id));
+            List<HistoryEntity> historyEntityList = historyRepository.findBySiteIdOrderByCreatedAt(siteEntity.getId());
+            List<SubsiteEntity> subsiteEntityList = subsiteRepository.findBySiteId(siteEntity.getId());
+            StampEntity stampEntity = stampRepository.findByStampLevel(siteEntity.getStampLevel());
+
+            if(stampEntity == null){
+                stampEntity = stampRepository.findByStampLevel(1);
+            }
+
             jsonData.put("url", siteEntity.getUrl());
             jsonData.put("name", siteEntity.getName());
             jsonData.put("last_score", siteEntity.getLastScore());
             jsonData.put("average", siteEntity.getAverage());
+            jsonData.put("validations", siteEntity.getValidations());
+            jsonData.put("last_validate", historyEntityList.get(0).getCreatedAt());
+            jsonData.put("quantity", subsiteEntityList.toArray().length);
+            jsonData.put("stamp", stampEntity.getImage());
 
             jsonResponse.put("success",true);
             jsonResponse.put("data", jsonData.toString());

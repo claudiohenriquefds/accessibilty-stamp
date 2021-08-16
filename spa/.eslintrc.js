@@ -26,7 +26,7 @@ module.exports = {
     'prefer-promise-reject-errors': ['off'],
     'react/jsx-filename-extension': ['off'],
     'react/prop-types': ['off'],
-    'no-return-assign': ['off']
-
+    'no-return-assign': ['off'],
+    "import/no-unresolved": "off"
   },
 };

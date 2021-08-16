@@ -9,27 +9,27 @@ import PanelContext from '../../../context/PanelContext';
 import logo from '../../../assets/Logo_indigo.svg';
 
 const Panel = () => {
-    let { data } = useContext(PanelContext);
+    const { dataPanel } = useContext(PanelContext);
 
-    if(data === null || typeof data.data === 'string'){
-        data = null;
-    }
+    // if(data === null || typeof data.data === 'string'){
+    //     data = null;
+    // }
 
-    if (data != null) {
+    if (dataPanel != null) {
         const labelsMonth = [];
         const averageSiteMonth = [];
         const lastScoreMonth = [];
         const labelsYear = [];
         const averageSiteYear = [];
 
-        data.data.history_month.map((element) => {
+        dataPanel.data.history_month.map((element) => {
             const date = new Date(element.date);
             labelsMonth.push(date.getDate());
             averageSiteMonth.push(element.average);
             lastScoreMonth.push(element.last_score);
         });
 
-        data.data.history_year.map((element) => {
+        dataPanel.data.history_year.map((element) => {
             const date = new Date(element.date);
             labelsYear.push(date.getMonth());
             averageSiteYear.push(element.average.toFixed(1));
@@ -87,28 +87,28 @@ const Panel = () => {
                         <span className="block text-sm text-gray-900">
                             Quantidade de avaliações:
                         </span>
-                        <span className="block text-lg text-gray-900">{data.data.validations}</span>
+                        <span className="block text-lg text-gray-900">{dataPanel.data.validations}</span>
                     </div>
                     <div className=" border border-gray-900 rounded-sm p-5 m-3 shadow">
                         <span className="block text-sm text-gray-900">
                             Média de nota (Todas as páginas encontradas):
                         </span>
                         <span className="block text-lg text-gray-900">
-                            {data.data.average.toFixed(1)}
+                            {dataPanel.data.average.toFixed(1)}
                         </span>
                     </div>
                     <div className=" border border-gray-900 rounded-sm p-5 m-3 shadow">
                         <span className="block text-sm text-gray-900">
                             Última nota (Página principal):
                         </span>
-                        <span className="block text-lg text-gray-900">{data.data.last_score}</span>
+                        <span className="block text-lg text-gray-900">{dataPanel.data.last_score}</span>
                     </div>
                     <div className=" border border-gray-900 rounded-sm p-5 m-3 shadow">
                         <span className="block text-sm text-gray-900">
                             Quantidade de páginas internas:
                         </span>
                         <span className="block text-lg text-gray-900">
-                            {data.data.subpages_quantity}
+                            {dataPanel.data.subpages_quantity}
                         </span>
                     </div>
                 </div>

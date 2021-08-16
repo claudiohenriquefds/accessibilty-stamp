@@ -10,9 +10,11 @@ import api from '../../services/api';
 
 import stampLogo from '../../assets/Logo.svg';
 import PanelContext from '../../context/PanelContext';
+import HistoryContext from '../../context/HistoryContext';
 
 const Navbar = ({ current, filter, search, endpoint }) => {
-    const { setData } = useContext(PanelContext);
+    const { setDataPanel } = useContext(PanelContext);
+    const { setDataHistory } = useContext(HistoryContext);
     const history = useHistory();
 
     const [sites, setSites] = useState([{ id: 0, name: 'Selecione uma opção.' }]);
@@ -48,7 +50,15 @@ const Navbar = ({ current, filter, search, endpoint }) => {
         setSelected(e);
         const response = await api.post(endpoint, { id: e.id });
         if (response.data.success) {
-            setData(response.data);
+            if(current === 'panel'){
+                setDataPanel(response.data);
+            }
+
+            if(current === 'history'){
+                setDataHistory(null);
+                setDataHistory(response.data);
+            }
+
         }
     }
 

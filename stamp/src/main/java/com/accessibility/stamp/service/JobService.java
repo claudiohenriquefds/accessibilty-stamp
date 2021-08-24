@@ -37,12 +37,12 @@ public class JobService {
     @Scheduled(fixedRate = 60000)
     public void runJob() throws JSONException, IOException {
         List<QueueEntity> queues = queueRepository.findByRun(true);
-        double average = 0;
-        int averageQuantity = 0;
 
         AccessMonitorService accessMonitorService = new AccessMonitorService();
 
         for(int i = 0; i < queues.toArray().length; i++){
+            double average = 0;
+            int averageQuantity = 0;
             LogsEntity logsEntity = new LogsEntity();
             HistoryEntity historyEntity = new HistoryEntity();
 

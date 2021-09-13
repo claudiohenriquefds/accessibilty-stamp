@@ -61,7 +61,7 @@ public class DataController {
                 jsonDataHistory.put("name", siteEntity.getName());
                 jsonDataHistory.put("url", siteEntity.getUrl());
                 jsonDataHistory.put("last_score", historyListMonth.get(i).getScore() != null ? historyListMonth.get(i).getScore() : 0);
-                jsonDataHistory.put("average", historyListMonth.get(i).getScore() != null ? historyListMonth.get(i).getScore() : 0);
+                jsonDataHistory.put("average", historyListMonth.get(i).getAverage() != null ? historyListMonth.get(i).getAverage() : 0);
                 jsonDataHistory.put("status", historyListMonth.get(i).getStatus());
                 jsonDataHistory.put("date", historyListMonth.get(i).getCreatedAt());
                 jsonDataMonth.put(jsonDataHistory);

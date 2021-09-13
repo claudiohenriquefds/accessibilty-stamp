@@ -68,7 +68,7 @@ public class DataController {
             }
 
             jsonDataStructure.put("history_month", jsonDataMonth);
-
+            System.out.println(historyListYear.toArray());
             for(int i = 0; i < historyListYear.toArray().length; i++){
                 JSONObject jsonDataHistory = new JSONObject();
 

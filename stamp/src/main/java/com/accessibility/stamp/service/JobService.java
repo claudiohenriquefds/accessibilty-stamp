@@ -14,6 +14,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.List;
 
 @Service
@@ -34,6 +35,12 @@ public class JobService {
     @Autowired
     private HistoryRepository historyRepository;
 
+    @Autowired
+    private DetailRepository detailRepository;
+
+    @Autowired
+    private DetailElementRepository detailElementRepository;
+
     @Scheduled(fixedRate = 60000)
     public void runJob() throws JSONException, IOException {
         List<QueueEntity> queues = queueRepository.findByRun(true);
@@ -41,8 +48,6 @@ public class JobService {
         AccessMonitorService accessMonitorService = new AccessMonitorService();
 
         for(int i = 0; i < queues.toArray().length; i++){
-            double average = 0;
-            int averageQuantity = 0;
             LogsEntity logsEntity = new LogsEntity();
             HistoryEntity historyEntity = new HistoryEntity();
 
@@ -52,9 +57,53 @@ public class JobService {
             SiteEntity siteEntity = siteRepository.findByUrl(queues.get(i).getUrl());
 
             if(resultValidation != ""){
+                double average = 0;
+                int averageQuantity = 0;
                 JSONObject validation = new JSONObject(resultValidation);
                 JSONObject result = new JSONObject(validation.getString("result"));
                 JSONObject data = new JSONObject(result.getString("data"));
+                JSONObject nodes = new JSONObject(data.getString("nodes"));
+
+                Iterator<?> nodesKeys = nodes.keys();
+
+                List<DetailEntity> deletedDetailEntity = detailRepository.findDetailBySiteId(siteEntity.getId());
+                if(deletedDetailEntity.toArray().length > 0){
+                    for(int contDeletedDetailEntity = 0; i < deletedDetailEntity.toArray().length; contDeletedDetailEntity++){
+                        detailRepository.delete(deletedDetailEntity.get(contDeletedDetailEntity));
+                        List<DetailElementEntity> deletedDetailElementEntity = detailElementRepository.findDetailElementByDetailId(deletedDetailEntity.get(contDeletedDetailEntity).getId());
+                        if(deletedDetailElementEntity.toArray().length > 0){
+                            for(int contDeletedDetailElementEntity  = 0; contDeletedDetailElementEntity < deletedDetailElementEntity.toArray().length; contDeletedDetailElementEntity++){
+                                detailElementRepository.delete(deletedDetailElementEntity.get(contDeletedDetailElementEntity));
+                            }
+                        }
+                    }
+                }
+
+                while(nodesKeys.hasNext()){
+                    JSONArray nodeArray =  new JSONArray(nodes.getString((String) nodesKeys.next()));
+                    if(nodeArray.length() > 0){
+                        JSONObject nodeObject = new JSONObject(nodeArray.get(0).toString());
+                        DetailEntity detailEntity = new DetailEntity();
+                        detailEntity.setElement((String) nodesKeys.next());
+                        detailEntity.setDescription(nodeObject.getString("description").toString());
+                        detailEntity.setVeredict(nodeObject.getString("verdict").toString());
+                        detailEntity.setSubsite(false);
+                        detailEntity.setUrl(queues.get(i).getUrl());
+                        detailEntity.setSiteId(siteEntity.getId());
+                        detailRepository.save(detailEntity);
+
+                        JSONArray nodeElementArray = new JSONArray(nodeObject.getString("elements").toString());
+
+                        for(int contNodeElement = 0; contNodeElement < nodeElementArray.length(); contNodeElement++){
+                            JSONObject nodeElementDetailed = new JSONObject(nodeElementArray.get(contNodeElement).toString());
+                            DetailElementEntity detailElementEntity = new DetailElementEntity();
+                            detailElementEntity.setDetailId(detailEntity.getId());
+                            detailElementEntity.setPointer(nodeElementDetailed.getString("pointer").toString());
+                            detailElementEntity.setHtmlCode(nodeElementDetailed.getString("htmlCode").toString());
+                            detailElementRepository.save(detailElementEntity);
+                        }
+                    }
+                }
 
                 logsEntity.setSiteId(siteEntity.getId());
                 logsEntity.setScore(data.getString("score"));
@@ -66,7 +115,6 @@ public class JobService {
 
                 if(siteEntity.getRunSubsites()){
                     int qtdHyperlinks = Integer.parseInt((new JSONObject(data.getString("elems"))).getString("a"));
-                    JSONObject nodes = new JSONObject(data.getString("nodes"));
                     JSONArray hyperLinks = new JSONArray(nodes.getString("a"));
 
                     Document doc = Jsoup.parse(result.getString("pagecode"));
@@ -83,7 +131,7 @@ public class JobService {
 
                         String urlComplete = queues.get(i).getUrl()+hrefContent;
 
-                        if(!hrefContent.contains("#") && (!hrefContent.contains("http") || hrefContent.contains(queues.get(i).getUrl())) && !urlComplete.equals(queues.get(i).getUrl())){
+                        if(!hrefContent.contains("#") && !hrefContent.contains("mailto") && !urlComplete.equals(queues.get(i).getUrl()+"/") && (!hrefContent.contains("http") || hrefContent.contains(queues.get(i).getUrl())) && !urlComplete.equals(queues.get(i).getUrl())){
                             System.out.println("Avaliando: "+urlComplete);
                             SubsiteEntity subsiteEntity = subsiteRepository.findSubsiteByUrl(urlComplete);
                             if(subsiteEntity == null){
@@ -97,6 +145,7 @@ public class JobService {
                                 JSONObject validationSubsite = new JSONObject(resultValidationSubsite);
                                 JSONObject resultSubsite = new JSONObject(validationSubsite.getString("result"));
                                 JSONObject dataSubsite = new JSONObject(resultSubsite.getString("data"));
+                                JSONObject nodesSubsite = new JSONObject(dataSubsite.getString("nodes"));
 
                                 subsiteEntity.setLastScore(dataSubsite.getString("score"));
                                 subsiteEntity.setUrl(urlComplete);
@@ -108,6 +157,46 @@ public class JobService {
 
                                 subsiteRepository.save(subsiteEntity);
 
+                                Iterator<?> nodeKeysSubsite = nodesSubsite.keys();
+
+                                List<DetailEntity> deletedDetailSubsiteEntity = detailRepository.findDetailByUrlAndSiteId(subsiteEntity.getUrl(), siteEntity.getId());
+                                if(deletedDetailSubsiteEntity.toArray().length > 0){
+                                    for(int contDeletedDetailSubsiteEntity = 0; contDeletedDetailSubsiteEntity < deletedDetailSubsiteEntity.toArray().length; contDeletedDetailSubsiteEntity++){
+                                        detailRepository.delete(deletedDetailSubsiteEntity.get(contDeletedDetailSubsiteEntity));
+                                        List<DetailElementEntity> deletedDetailSubsiteElementEntity = detailElementRepository.findDetailElementByDetailId(deletedDetailSubsiteEntity.get(contDeletedDetailSubsiteEntity).getId());
+                                        if(deletedDetailSubsiteElementEntity.toArray().length > 0){
+                                            for(int contDeletedDetailElementSubsiteEntity = 0; contDeletedDetailElementSubsiteEntity < deletedDetailSubsiteElementEntity.toArray().length; contDeletedDetailElementSubsiteEntity++){
+                                                detailElementRepository.delete(deletedDetailSubsiteElementEntity.get(contDeletedDetailElementSubsiteEntity));
+                                            }
+                                        }
+                                    }
+                                }
+
+                                while(nodeKeysSubsite.hasNext()){
+                                    JSONArray nodeSubsiteArray =  new JSONArray(nodesSubsite.getString((String) nodeKeysSubsite.next()));
+                                    if(nodeSubsiteArray.length() > 0) {
+                                        JSONObject nodeSubsiteObject = new JSONObject(nodeSubsiteArray.get(0).toString());
+                                        DetailEntity detailSubsiteEntity = new DetailEntity();
+                                        detailSubsiteEntity.setElement((String) nodeKeysSubsite.next());
+                                        detailSubsiteEntity.setDescription(nodeSubsiteObject.getString("description").toString());
+                                        detailSubsiteEntity.setVeredict(nodeSubsiteObject.getString("verdict").toString());
+                                        detailSubsiteEntity.setSubsite(true);
+                                        detailSubsiteEntity.setUrl(urlComplete);
+                                        detailSubsiteEntity.setSiteId(siteEntity.getId());
+                                        detailRepository.save(detailSubsiteEntity);
+
+                                        JSONArray nodeSubsiteElementArray = new JSONArray(nodeSubsiteObject.getString("elements").toString());
+
+                                        for (int contNodeSubsiteElement = 0; contNodeSubsiteElement < nodeSubsiteElementArray.length(); contNodeSubsiteElement++) {
+                                            JSONObject nodeSubsiteElementDetailed = new JSONObject(nodeSubsiteElementArray.get(contNodeSubsiteElement).toString());
+                                            DetailElementEntity detailSubsiteElementEntity = new DetailElementEntity();
+                                            detailSubsiteElementEntity.setDetailId(detailSubsiteEntity.getId());
+                                            detailSubsiteElementEntity.setPointer(nodeSubsiteElementDetailed.getString("pointer").toString());
+                                            detailSubsiteElementEntity.setHtmlCode(nodeSubsiteElementDetailed.getString("htmlCode").toString());
+                                            detailElementRepository.save(detailSubsiteElementEntity);
+                                        }
+                                    }
+                                }
                                 logsEntitySubsite.setSiteId(siteEntity.getId());
                                 logsEntitySubsite.setUrl(urlComplete);
                                 logsEntitySubsite.setScore(dataSubsite.getString("score"));

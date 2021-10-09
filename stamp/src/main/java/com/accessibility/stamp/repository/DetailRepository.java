@@ -10,4 +10,5 @@ import java.util.List;
 public interface DetailRepository extends JpaRepository<DetailEntity, Long> {
     List<DetailEntity> findDetailBySiteId(Long siteId);
     List<DetailEntity> findDetailByUrlAndSiteId(String url, Long siteId);
+    List<DetailEntity> findDetailBySiteIdAndVeredict(Long siteId, String veredict);
 }

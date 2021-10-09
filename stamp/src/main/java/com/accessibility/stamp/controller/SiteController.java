@@ -230,7 +230,7 @@ public class SiteController {
         return jsonResponse.toString();
     }
 
-    @GetMapping("/get-detailed")
+    @PostMapping("/get-detailed")
     public String getDetailed(@RequestBody String requestBody, @RequestHeader("Authorization") String authorization) throws JSONException {
         UserEntity userEntity = userRepository.findByToken(authorization.replaceAll("Bearer ",""));
         JSONObject body = new JSONObject(requestBody);
@@ -264,7 +264,7 @@ public class SiteController {
             }
 
             jsonResponse.put("success", true);
-            jsonResponse.put("data", detailArray.toString());
+            jsonResponse.put("data", detailArray);
             jsonResponse.put("errors", null);
         }catch(JSONException e){
             jsonResponse.put("success", false);

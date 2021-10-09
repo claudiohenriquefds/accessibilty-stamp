@@ -31,6 +31,9 @@ public class DataController {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private DetailRepository detailRepository;
+
     @PostMapping
     public String post(@RequestBody String bodyResquest, @RequestHeader("Authorization") String authorization) throws JSONException {
         UserEntity userEntity = userRepository.findByToken(authorization.replaceAll("Bearer ",""));
@@ -50,7 +53,14 @@ public class DataController {
             List<HistoryEntity> historyListYear = historyRepository.findAllUsingRawQuery(Long.parseLong(body.get("id").toString()));
             List<SubsiteEntity> subsiteEntityList = subsiteRepository.findBySiteId(siteEntity.getId());
 
+            List<DetailEntity> detailEntityListPassed = detailRepository.findDetailBySiteIdAndVeredict(siteEntity.getId(), "passed");
+            List<DetailEntity> detailEntityListWarning = detailRepository.findDetailBySiteIdAndVeredict(siteEntity.getId(), "warning");
+            List<DetailEntity> detailEntityListFailed = detailRepository.findDetailBySiteIdAndVeredict(siteEntity.getId(), "failed");
+
             jsonDataStructure.put("validations", siteEntity.getValidations());
+            jsonDataStructure.put("warning", detailEntityListWarning.toArray().length);
+            jsonDataStructure.put("passed", detailEntityListPassed.toArray().length);
+            jsonDataStructure.put("failed", detailEntityListFailed.toArray().length);
             jsonDataStructure.put("average", siteEntity.getAverage());
             jsonDataStructure.put("last_score", siteEntity.getLastScore());
             jsonDataStructure.put("subpages_quantity", subsiteEntityList.toArray().length);

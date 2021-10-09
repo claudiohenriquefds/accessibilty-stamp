@@ -37,6 +37,7 @@ const Navbar = ({ current, filter, search, endpoint }) => {
         setSites([{ id: 0, name: 'Selecione uma opção.', unavailable: true }]);
 
         const response = await api.get('site/show');
+
         const sitesResponse = JSON.parse(response.data.data);
         // eslint-disable-next-line array-callback-return
         sitesResponse.map((e) => {

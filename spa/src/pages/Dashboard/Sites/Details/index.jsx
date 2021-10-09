@@ -1,52 +1,57 @@
-import React, { useState, useEffect } from 'react';
-
-import { Link } from 'react-router-dom';
-import api from '../../../../services/api';
+/* eslint-disable array-callback-return */
+import React, { useState, useEffect, useContext } from 'react';
 
 import Navbar from '../../../../components/Navbar';
+import Modal from '../../../../components/Modal';
+import api from '../../../../services/api';
 
-const Site = () => {
-    const [sites, setSites] = useState([]);
+import ModalContext from '../../../../context/ModalContext';
 
-    async function getSites() {
-        const sitesArray = [];
-        const response = await api.get('site/show');
+const Details = (props) => {
+    const [details, setDetails] = useState([]);
+
+    const { open, setOpen } = useContext(ModalContext);
+    const { setContent } = useContext(ModalContext);
+
+    const colors = {
+        passed: "bg-green-100 text-green-800",
+        failed: "bg-red-100 text-red-800",
+        warning: "bg-yellow-100 text-yellow-800",
+    };
+
+    function classNames(...classes) {
+        return classes.filter(Boolean).join(' ');
+    }
+
+    const { match } = props;
+    async function getDetails() {
+        const detailsArray = [];
+        const response = await api.post('site/get-detailed', { id: match.params.id });
+
         if (response.data.success) {
-            const data = JSON.parse(response.data.data);
-            // eslint-disable-next-line array-callback-return
-            data.map((element) => {
-                sitesArray.push({
-                    id: element.id,
-                    name: element.name,
-                    last_score: element.last_score,
-                    grade_average: element.average.toFixed(1),
-                    pages: element.pages,
+            response.data.data.map((element) => {
+                detailsArray.push({
+                    description: element.description,
+                    veredict: element.veredict,
                     url: element.url,
-                    image: element.stamp
+                    element: element.element,
+                    elements_detailed: element.elements_detailed,
                 });
             });
         }
 
-        setSites(sitesArray);
+        setDetails(detailsArray);
     }
 
     useEffect(() => {
-        getSites();
+        getDetails();
     }, []);
-
     return (
         <>
-            <Navbar current="sites" search="site" />
+            {open ? <Modal /> : null}
+            <Navbar current="sites" />
             <div className="grid grid-cols-1 md:grid-cols-1">
                 <div className="flex flex-col m-3">
-                    <div className="w-full flex flex-row-reverse">
-                        <Link
-                            to="/dashboard/sites/new"
-                            className="flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-800 my-2"
-                        >
-                            Novo site
-                        </Link>
-                    </div>
                     <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                         <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
                             <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
@@ -57,87 +62,73 @@ const Site = () => {
                                                 scope="col"
                                                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                                             >
-                                                Name
+                                                Site
                                             </th>
                                             <th
                                                 scope="col"
                                                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                                             >
-                                                Ultima nota (Página principal)
+                                                Descrição
                                             </th>
                                             <th
                                                 scope="col"
                                                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                                             >
-                                                Média de nota (Todas as páginas encontradas)
+                                                Elemento
                                             </th>
                                             <th
                                                 scope="col"
                                                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                                             >
-                                                Páginas
+                                                Elemento detalhado
                                             </th>
                                             <th
                                                 scope="col"
                                                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                                             >
-                                                Indicadores
-                                            </th>
-                                            <th
-                                                scope="col"
-                                                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                                            >
-                                                Selo
+                                                Veredito
                                             </th>
                                         </tr>
                                     </thead>
                                     <tbody className="bg-white divide-y divide-gray-200">
-                                        {sites.map((site) => (
-                                            <tr key={site.url}>
+                                        {details.map((detail) => (
+                                            <tr key={detail.url}>
                                                 <td className="px-6 py-4 whitespace-nowrap">
                                                     <div className="flex items-center">
                                                         <div className="ml-4">
                                                             <div className="text-sm font-medium text-gray-900">
-                                                                {site.name}
-                                                            </div>
-                                                            <div className="text-sm text-gray-500">
-                                                                {site.url}
+                                                                {detail.url}
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </td>
-                                                <td className="px-6 py-4 whitespace-nowrap">
+                                                <td className="px-6 py-4">
                                                     <div className="text-sm text-gray-900">
-                                                        {site.last_score}
+                                                        {detail.description}
                                                     </div>
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap">
                                                     <div className="text-sm text-gray-900">
-                                                        {site.grade_average}
+                                                        {detail.element}
                                                     </div>
                                                 </td>
-                                                <td className="px-6 py-4 whitespace-nowrap">
+                                                <td className="px-6 py-4">
                                                     <div className="text-sm text-gray-900">
-                                                        {site.pages}
-                                                    </div>
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap">
-                                                    <div className="text-sm text-gray-900">
-                                                        <Link
-                                                            to={`sites/details/${site.id}`}
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => {
+                                                                setContent(detail.elements_detailed);
+                                                                setOpen(true);
+                                                            }}
                                                             className="flex items-center justify-center px-4 py-2 border border-gray-400 rounded-md shadow-sm text-sm font-medium text-gray-600 bg-gray-200 hover:bg-gray-300"
                                                         >
-                                                            Detalhar
-                                                        </Link>
+                                                            Ver mais
+                                                        </button>
                                                     </div>
                                                 </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                                    <div className="flex-shrink-0">
-                                                        <img
-                                                            className="min-w-full max-w-none w-48"
-                                                            src={site.image}
-                                                            alt=""
-                                                        />
+                                                <td className="px-6 py-4 whitespace-nowrap">
+                                                    <div className={classNames("px-2 inline-flex text-xs leading-5 font-semibold rounded-full", colors[detail.veredict])}>
+                                                        {detail.veredict}
                                                     </div>
                                                 </td>
                                             </tr>
@@ -153,4 +144,4 @@ const Site = () => {
     );
 };
 
-export default Site;
+export default Details;

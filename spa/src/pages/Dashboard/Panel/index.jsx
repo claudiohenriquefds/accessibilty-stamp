@@ -11,10 +11,6 @@ import logo from '../../../assets/Logo_indigo.svg';
 const Panel = () => {
     const { dataPanel } = useContext(PanelContext);
 
-    // if(data === null || typeof data.data === 'string'){
-    //     data = null;
-    // }
-
     if (dataPanel != null) {
         const labelsMonth = [];
         const averageSiteMonth = [];
@@ -82,6 +78,9 @@ const Panel = () => {
         return (
             <>
                 <Navbar current="panel" filter endpoint="data" />
+                <div className="p-2 m-3">
+                    <h5>1. Informações da avaliação</h5>
+                </div>
                 <div className="grid grid-cols-1 md:grid-cols-4">
                     <div className=" border border-gray-900 rounded-sm p-5 m-3 shadow">
                         <span className="block text-sm text-gray-900">
@@ -111,6 +110,36 @@ const Panel = () => {
                             {dataPanel.data.subpages_quantity}
                         </span>
                     </div>
+                </div>
+                <div className="p-2 m-3">
+                    <h5>2. Idicadores</h5>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3">
+                    <div className=" border border-gray-900 rounded-sm p-5 m-3 shadow bg-yellow-300">
+                        <span className="block text-sm text-gray-900">
+                            Warning
+                        </span>
+                        <span className="block text-lg text-gray-900">{dataPanel.data.warning}</span>
+                    </div>
+                    <div className=" border border-gray-900 rounded-sm p-5 m-3 shadow bg-green-300">
+                        <span className="block text-sm text-gray-900">
+                            Passed
+                        </span>
+                        <span className="block text-lg text-gray-900">
+                            {dataPanel.data.passed}
+                        </span>
+                    </div>
+                    <div className=" border border-gray-900 rounded-sm p-5 m-3 shadow bg-red-300">
+                        <span className="block text-sm text-gray-900">
+                            Failed
+                        </span>
+                        <span className="block text-lg text-gray-900">
+                            {dataPanel.data.failed}
+                        </span>
+                    </div>
+                </div>
+                <div className="p-2 m-3">
+                    <h5>3. Gráfico das avaliações (Mensal e Anual) respectivamente.</h5>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2">
                     <div className="border border-gray-900 rounded-sm p-5 m-3 shadow">

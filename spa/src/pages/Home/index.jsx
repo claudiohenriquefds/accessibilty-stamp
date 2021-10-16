@@ -178,12 +178,29 @@ const Home = () => (
                                                     </a>
                                                 ))}
                                             </div>
-                                            <a
-                                                href="/"
-                                                className="block w-full px-5 py-3 text-center font-medium text-indigo-600 bg-gray-50 hover:bg-gray-100"
-                                            >
-                                                Log in
-                                            </a>
+                                            {isAuthenticated() ? (
+                                                <a
+                                                    href="/dashboard/panel"
+                                                    className="block w-full px-5 py-3 text-center font-medium text-indigo-600 bg-gray-50 hover:bg-gray-100"
+                                                >
+                                                    Dashboard
+                                                </a>
+                                            ) : (
+                                                <>
+                                                    <a
+                                                        href="/login"
+                                                        className="block w-full px-5 py-3 text-center font-medium text-indigo-600 bg-gray-50 hover:bg-gray-100"
+                                                    >
+                                                        Entrar
+                                                    </a>
+                                                    <a
+                                                        href="/register"
+                                                        className="block w-full px-5 py-3 text-center font-medium text-indigo-600 bg-gray-50 hover:bg-gray-100"
+                                                    >
+                                                        Registrar
+                                                    </a>
+                                                </>
+                                            )}
                                         </div>
                                     </Popover.Panel>
                                 </Transition>

@@ -3,6 +3,7 @@ import { Link, useHistory } from 'react-router-dom';
 
 import Navbar from '../../../../components/Navbar';
 import api from '../../../../services/api';
+import { logout } from '../../../../services/auth';
 import spinner from '../../../../assets/Spinner.svg';
 
 const NewSite = () => {
@@ -19,13 +20,17 @@ const NewSite = () => {
 
         try {
             if (name !== null || url !== null) {
-                const response = await api.post('site/store', { name, url });
-                if (response.data.success) {
-                    history.push('/dashboard/sites');
-                } else {
-                    setError({ error: true, message: 'Falha ao registrar site' });
-                    setLoading(false);
-                }
+                api.post('site/store', { name, url }).then((response) => {
+                    if (response.data.success) {
+                        history.push('/dashboard/sites');
+                    } else {
+                        setError({ error: true, message: 'Falha ao registrar site' });
+                        setLoading(false);
+                    }
+                }).catch((err) => {
+                    console.log(err);
+                    logout(history)
+                });
             } else {
                 setError({ error: true, message: 'Campos obrigatórios não foram informados.' });
                 setLoading(false);

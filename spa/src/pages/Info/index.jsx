@@ -2,20 +2,28 @@
 import React, { useEffect, useState } from 'react';
 import { ArrowLeftIcon } from '@heroicons/react/solid';
 
+import { useHistory } from 'react-router-dom';
 import api from '../../services/api';
+import { logout } from '../../services/auth';
 import spinner from '../../assets/Spinner_indigo.svg';
 import logo from '../../assets/Logo_indigo.svg';
 
 export default function Info({ match }) {
     const [info, setInfo] = useState(null);
     const [loading, setLoading] = useState(true);
+    const history = useHistory();
+
     useEffect(async () => {
-        const response = await api.get(`stamp/info?id=${match.params.id}`);
-        if (response.data.success) {
-            setInfo(JSON.parse(response.data.data));
-        }else{
-            setLoading(false);
-        }
+        api.get(`stamp/info?id=${match.params.id}`).then((response) => {
+            if (response.data.success) {
+                setInfo(JSON.parse(response.data.data));
+            }else{
+                setLoading(false);
+            }
+        }).catch((err) => {
+            console.log(err);
+            logout(history)
+        });
     }, []);
 
     return (

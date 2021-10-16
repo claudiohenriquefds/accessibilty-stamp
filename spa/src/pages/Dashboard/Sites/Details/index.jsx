@@ -1,13 +1,16 @@
 /* eslint-disable array-callback-return */
 import React, { useState, useEffect, useContext } from 'react';
+import { useHistory } from 'react-router-dom';
 
 import Navbar from '../../../../components/Navbar';
 import Modal from '../../../../components/Modal';
 import api from '../../../../services/api';
+import { logout } from '../../../../services/auth';
 
 import ModalContext from '../../../../context/ModalContext';
 
 const Details = (props) => {
+    const history = useHistory();
     const [details, setDetails] = useState([]);
 
     const { open, setOpen } = useContext(ModalContext);
@@ -26,21 +29,25 @@ const Details = (props) => {
     const { match } = props;
     async function getDetails() {
         const detailsArray = [];
-        const response = await api.post('site/get-detailed', { id: match.params.id });
-
-        if (response.data.success) {
-            response.data.data.map((element) => {
-                detailsArray.push({
-                    description: element.description,
-                    veredict: element.veredict,
-                    url: element.url,
-                    element: element.element,
-                    elements_detailed: element.elements_detailed,
+        api.post('site/get-detailed', { id: match.params.id }).then((response) => {
+            if (response.data.success) {
+                response.data.data.map((element) => {
+                    detailsArray.push({
+                        description: element.description,
+                        veredict: element.veredict,
+                        url: element.url,
+                        element: element.element,
+                        elements_detailed: element.elements_detailed,
+                    });
                 });
-            });
-        }
+            }
 
-        setDetails(detailsArray);
+            setDetails(detailsArray);
+        }).catch((err) => {
+            console.log(err);
+            logout(history)
+        });
+
     }
 
     useEffect(() => {

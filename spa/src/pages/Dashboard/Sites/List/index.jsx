@@ -1,33 +1,39 @@
 import React, { useState, useEffect } from 'react';
 
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import api from '../../../../services/api';
+import { logout } from '../../../../services/auth';
 
 import Navbar from '../../../../components/Navbar';
 
 const Site = () => {
     const [sites, setSites] = useState([]);
+    const history = useHistory();
 
     async function getSites() {
         const sitesArray = [];
-        const response = await api.get('site/show');
-        if (response.data.success) {
-            const data = JSON.parse(response.data.data);
-            // eslint-disable-next-line array-callback-return
-            data.map((element) => {
-                sitesArray.push({
-                    id: element.id,
-                    name: element.name,
-                    last_score: element.last_score,
-                    grade_average: element.average.toFixed(1),
-                    pages: element.pages,
-                    url: element.url,
-                    image: element.stamp
+        api.get('site/show').then((response) => {
+            if (response.data.success) {
+                const data = JSON.parse(response.data.data);
+                // eslint-disable-next-line array-callback-return
+                data.map((element) => {
+                    sitesArray.push({
+                        id: element.id,
+                        name: element.name,
+                        last_score: element.last_score,
+                        grade_average: element.average.toFixed(1),
+                        pages: element.pages,
+                        url: element.url,
+                        image: element.stamp
+                    });
                 });
-            });
-        }
+            }
 
-        setSites(sitesArray);
+            setSites(sitesArray);
+        }).catch((err) => {
+            console.log(err);
+            logout(history)
+        });
     }
 
     useEffect(() => {

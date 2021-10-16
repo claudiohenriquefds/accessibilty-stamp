@@ -36,31 +36,38 @@ const Navbar = ({ current, filter, search, endpoint }) => {
         mountedSites = [{ id: 0, name: 'Selecione uma opção.', unavailable: true }];
         setSites([{ id: 0, name: 'Selecione uma opção.', unavailable: true }]);
 
-        const response = await api.get('site/show');
-
-        const sitesResponse = JSON.parse(response.data.data);
-        // eslint-disable-next-line array-callback-return
-        sitesResponse.map((e) => {
-            mountedSites.push({ id: e.id, name: e.name });
+        api.get('site/show').then((content) => {
+            // eslint-disable-next-line array-callback-return
+            JSON.parse(content.data.data).map((e) => {
+                mountedSites.push({ id: e.id, name: e.name });
+            });
+            setSites(mountedSites);
+        }).catch((err) => {
+            console.log(err);
+            logout(history)
         });
 
-        setSites(mountedSites);
+
     }
 
     async function handleSelect(e) {
         setSelected(e);
-        const response = await api.post(endpoint, { id: e.id });
-        if (response.data.success) {
-            if(current === 'panel'){
-                setDataPanel(response.data);
-            }
+        api.post(endpoint, { id: e.id }).then((response) => {
+            if (response.data.success) {
+                if(current === 'panel'){
+                    setDataPanel(response.data);
+                }
 
-            if(current === 'history'){
-                setDataHistory(null);
-                setDataHistory(response.data);
-            }
+                if(current === 'history'){
+                    setDataHistory(null);
+                    setDataHistory(response.data);
+                }
 
-        }
+            }
+        }).catch((err) => {
+            console.log(err);
+            logout(history);
+        });
     }
 
     useEffect(() => {

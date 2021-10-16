@@ -27,7 +27,7 @@ const Panel = () => {
 
         dataPanel.data.history_year.map((element) => {
             const date = new Date(element.date);
-            labelsYear.push(date.getMonth());
+            labelsYear.push(date.getMonth()+1);
             averageSiteYear.push(element.average.toFixed(1));
         });
 

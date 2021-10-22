@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface DetailElementRepository extends JpaRepository<DetailElementEntity, Long> {
-    List<DetailElementEntity> findDetailElementByDetailId(Long detailId);
+
 }

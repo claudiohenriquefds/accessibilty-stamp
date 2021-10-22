@@ -13,11 +13,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
 @Service
+@Transactional
 public class JobService {
 
     @Autowired
@@ -68,15 +70,7 @@ public class JobService {
 
                 List<DetailEntity> deletedDetailEntity = detailRepository.findDetailBySiteId(siteEntity.getId());
                 if(deletedDetailEntity.toArray().length > 0){
-                    for(int contDeletedDetailEntity = 0; i < deletedDetailEntity.toArray().length; contDeletedDetailEntity++){
-                        detailRepository.delete(deletedDetailEntity.get(contDeletedDetailEntity));
-                        List<DetailElementEntity> deletedDetailElementEntity = detailElementRepository.findDetailElementByDetailId(deletedDetailEntity.get(contDeletedDetailEntity).getId());
-                        if(deletedDetailElementEntity.toArray().length > 0){
-                            for(int contDeletedDetailElementEntity  = 0; contDeletedDetailElementEntity < deletedDetailElementEntity.toArray().length; contDeletedDetailElementEntity++){
-                                detailElementRepository.delete(deletedDetailElementEntity.get(contDeletedDetailElementEntity));
-                            }
-                        }
-                    }
+                    detailRepository.deleteBySiteIdAndSubsite(siteEntity.getId(), false);
                 }
 
                 while(nodesKeys.hasNext()){
@@ -97,7 +91,7 @@ public class JobService {
                         for(int contNodeElement = 0; contNodeElement < nodeElementArray.length(); contNodeElement++){
                             JSONObject nodeElementDetailed = new JSONObject(nodeElementArray.get(contNodeElement).toString());
                             DetailElementEntity detailElementEntity = new DetailElementEntity();
-                            detailElementEntity.setDetailId(detailEntity.getId());
+                            detailElementEntity.setDetailEntity(detailEntity);
                             detailElementEntity.setPointer(nodeElementDetailed.getString("pointer").toString());
                             detailElementEntity.setHtmlCode(nodeElementDetailed.getString("htmlCode").toString());
                             detailElementRepository.save(detailElementEntity);
@@ -161,15 +155,7 @@ public class JobService {
 
                                 List<DetailEntity> deletedDetailSubsiteEntity = detailRepository.findDetailByUrlAndSiteId(subsiteEntity.getUrl(), siteEntity.getId());
                                 if(deletedDetailSubsiteEntity.toArray().length > 0){
-                                    for(int contDeletedDetailSubsiteEntity = 0; contDeletedDetailSubsiteEntity < deletedDetailSubsiteEntity.toArray().length; contDeletedDetailSubsiteEntity++){
-                                        detailRepository.delete(deletedDetailSubsiteEntity.get(contDeletedDetailSubsiteEntity));
-                                        List<DetailElementEntity> deletedDetailSubsiteElementEntity = detailElementRepository.findDetailElementByDetailId(deletedDetailSubsiteEntity.get(contDeletedDetailSubsiteEntity).getId());
-                                        if(deletedDetailSubsiteElementEntity.toArray().length > 0){
-                                            for(int contDeletedDetailElementSubsiteEntity = 0; contDeletedDetailElementSubsiteEntity < deletedDetailSubsiteElementEntity.toArray().length; contDeletedDetailElementSubsiteEntity++){
-                                                detailElementRepository.delete(deletedDetailSubsiteElementEntity.get(contDeletedDetailElementSubsiteEntity));
-                                            }
-                                        }
-                                    }
+                                    detailRepository.deleteBySiteIdAndSubsite(siteEntity.getId(), true);
                                 }
 
                                 while(nodeKeysSubsite.hasNext()){
@@ -190,7 +176,7 @@ public class JobService {
                                         for (int contNodeSubsiteElement = 0; contNodeSubsiteElement < nodeSubsiteElementArray.length(); contNodeSubsiteElement++) {
                                             JSONObject nodeSubsiteElementDetailed = new JSONObject(nodeSubsiteElementArray.get(contNodeSubsiteElement).toString());
                                             DetailElementEntity detailSubsiteElementEntity = new DetailElementEntity();
-                                            detailSubsiteElementEntity.setDetailId(detailSubsiteEntity.getId());
+                                            detailSubsiteElementEntity.setDetailEntity(detailSubsiteEntity);
                                             detailSubsiteElementEntity.setPointer(nodeSubsiteElementDetailed.getString("pointer").toString());
                                             detailSubsiteElementEntity.setHtmlCode(nodeSubsiteElementDetailed.getString("htmlCode").toString());
                                             detailElementRepository.save(detailSubsiteElementEntity);

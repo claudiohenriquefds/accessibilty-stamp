@@ -248,7 +248,7 @@ public class SiteController {
                 jsonDetail.put("url", detailEntities.get(contDetailArray).getUrl());
                 jsonDetail.put("description", detailEntities.get(contDetailArray).getDescription());
 
-                List<DetailElementEntity> detailElementEntities = detailElementRepository.findDetailElementByDetailId(detailEntities.get(contDetailArray).getId());
+                List<DetailElementEntity> detailElementEntities = detailEntities.get(contDetailArray).getDetailElementEntities();
                 JSONArray jsonDetailElementArray = new JSONArray();
                 for(int contDetailElement = 0; contDetailElement < detailElementEntities.toArray().length; contDetailElement++){
                     JSONObject jsonDetailElement = new JSONObject();

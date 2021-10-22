@@ -12,7 +12,9 @@ public class DetailElementEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long detailId;
+    @ManyToOne
+    @JoinColumn(name = "detail_id")
+    private DetailEntity detailEntity;
 
     @Column(columnDefinition = "TEXT")
     private String pointer;

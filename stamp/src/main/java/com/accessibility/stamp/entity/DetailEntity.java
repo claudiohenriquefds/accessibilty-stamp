@@ -3,6 +3,7 @@ package com.accessibility.stamp.entity;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Data
 @Entity
@@ -21,4 +22,7 @@ public class DetailEntity {
 
     @Column(columnDefinition = "TEXT")
     private String description;
+
+    @OneToMany(mappedBy = "detailEntity", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<DetailElementEntity> detailElementEntities;
 }

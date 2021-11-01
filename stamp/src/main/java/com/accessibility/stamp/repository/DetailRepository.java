@@ -11,6 +11,5 @@ public interface DetailRepository extends JpaRepository<DetailEntity, Long> {
     List<DetailEntity> findDetailBySiteId(Long siteId);
     List<DetailEntity> findDetailByUrlAndSiteId(String url, Long siteId);
     List<DetailEntity> findDetailBySiteIdAndVeredict(Long siteId, String veredict);
-
-    DetailEntity deleteBySiteIdAndSubsite(Long siteId, Boolean subsite);
+    List<DetailEntity> findDetailBySiteIdAndSubsite(Long siteId, Boolean subsite);
 }

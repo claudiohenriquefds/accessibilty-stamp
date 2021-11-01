@@ -68,17 +68,19 @@ public class JobService {
 
                 Iterator<?> nodesKeys = nodes.keys();
 
-                List<DetailEntity> deletedDetailEntity = detailRepository.findDetailBySiteId(siteEntity.getId());
+                List<DetailEntity> deletedDetailEntity = detailRepository.findDetailBySiteIdAndSubsite(siteEntity.getId(), false);
+                
                 if(deletedDetailEntity.toArray().length > 0){
-                    detailRepository.deleteBySiteIdAndSubsite(siteEntity.getId(), false);
+                    detailRepository.deleteAll(deletedDetailEntity);
                 }
 
                 while(nodesKeys.hasNext()){
-                    JSONArray nodeArray =  new JSONArray(nodes.getString((String) nodesKeys.next()));
+                    String key = (String) nodesKeys.next();
+                    JSONArray nodeArray =  new JSONArray(nodes.getString(key));
                     if(nodeArray.length() > 0){
                         JSONObject nodeObject = new JSONObject(nodeArray.get(0).toString());
                         DetailEntity detailEntity = new DetailEntity();
-                        detailEntity.setElement((String) nodesKeys.next());
+                        detailEntity.setElement(key);
                         detailEntity.setDescription(nodeObject.getString("description").toString());
                         detailEntity.setVeredict(nodeObject.getString("verdict").toString());
                         detailEntity.setSubsite(false);
@@ -155,15 +157,16 @@ public class JobService {
 
                                 List<DetailEntity> deletedDetailSubsiteEntity = detailRepository.findDetailByUrlAndSiteId(subsiteEntity.getUrl(), siteEntity.getId());
                                 if(deletedDetailSubsiteEntity.toArray().length > 0){
-                                    detailRepository.deleteBySiteIdAndSubsite(siteEntity.getId(), true);
+                                    detailRepository.deleteAll(deletedDetailSubsiteEntity);
                                 }
 
                                 while(nodeKeysSubsite.hasNext()){
-                                    JSONArray nodeSubsiteArray =  new JSONArray(nodesSubsite.getString((String) nodeKeysSubsite.next()));
+                                    String subsiteKey = (String) nodeKeysSubsite.next();
+                                    JSONArray nodeSubsiteArray =  new JSONArray(nodesSubsite.getString(subsiteKey));
                                     if(nodeSubsiteArray.length() > 0) {
                                         JSONObject nodeSubsiteObject = new JSONObject(nodeSubsiteArray.get(0).toString());
                                         DetailEntity detailSubsiteEntity = new DetailEntity();
-                                        detailSubsiteEntity.setElement((String) nodeKeysSubsite.next());
+                                        detailSubsiteEntity.setElement(subsiteKey);
                                         detailSubsiteEntity.setDescription(nodeSubsiteObject.getString("description").toString());
                                         detailSubsiteEntity.setVeredict(nodeSubsiteObject.getString("verdict").toString());
                                         detailSubsiteEntity.setSubsite(true);

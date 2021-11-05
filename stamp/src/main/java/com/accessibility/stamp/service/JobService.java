@@ -245,6 +245,7 @@ public class JobService {
                     queueEntity.setAttempts(queueEntity.getAttempts() + 1);
                 }
                 queueRepository.save(queueEntity);
+                System.out.println(siteEntity.getUrl());
                 logsEntity.setSiteId(siteEntity.getId());
                 logsEntity.setLogs(resultValidation);
                 logsEntity.setSubsite(false);

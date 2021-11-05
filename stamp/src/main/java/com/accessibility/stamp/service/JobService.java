@@ -69,7 +69,7 @@ public class JobService {
                 Iterator<?> nodesKeys = nodes.keys();
 
                 List<DetailEntity> deletedDetailEntity = detailRepository.findDetailBySiteIdAndSubsite(siteEntity.getId(), false);
-                
+
                 if(deletedDetailEntity.toArray().length > 0){
                     detailRepository.deleteAll(deletedDetailEntity);
                 }

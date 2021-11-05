@@ -42,6 +42,7 @@ public class SecuryConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/stamp/script.min.js").permitAll()
                 .antMatchers(HttpMethod.GET, "/stamp/info").permitAll()
                 .antMatchers(HttpMethod.GET, "/evaluate").permitAll()
+                .antMatchers(HttpMethod.GET, "/data/comparative").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(new JwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);

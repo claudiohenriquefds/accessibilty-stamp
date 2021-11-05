@@ -245,18 +245,19 @@ public class JobService {
                     queueEntity.setAttempts(queueEntity.getAttempts() + 1);
                 }
                 queueRepository.save(queueEntity);
-                System.out.println(siteEntity.getUrl());
-                logsEntity.setSiteId(siteEntity.getId());
-                logsEntity.setLogs(resultValidation);
-                logsEntity.setSubsite(false);
-                logsEntity.setUrl(queues.get(i).getUrl());
-                logsEntity.setStatus(2);
+                if(siteEntity != null){   
+                    logsEntity.setSiteId(siteEntity.getId());
+                    logsEntity.setLogs(resultValidation);
+                    logsEntity.setSubsite(false);
+                    logsEntity.setUrl(queues.get(i).getUrl());
+                    logsEntity.setStatus(2);
 
-                historyEntity.setSiteId(siteEntity.getId());
-                historyEntity.setStatus(2);
-                historyRepository.save(historyEntity);
+                    historyEntity.setSiteId(siteEntity.getId());
+                    historyEntity.setStatus(2);
+                    historyRepository.save(historyEntity);
 
-                logsRepository.save(logsEntity);
+                    logsRepository.save(logsEntity);
+                }
             }
         }
     }

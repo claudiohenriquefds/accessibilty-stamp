@@ -133,6 +133,15 @@ class AccessMonitorService
                 }
             }
 
+            Log::create([
+                'site_id' => !is_null($site) ? $site->id : $subsite->site_id,
+                'score' => (float) $response->json()['result']['data']['score'],
+                'is_subsite' => !is_null($site) ? false : true,
+                'url' => !is_null($site) ? $site->url : $subsite->url,
+                'status' => 3,
+                'data' => $response->json()
+            ]);
+
         } catch (\Exception $exception) {
             Log::create([
                 'site_id' => !is_null($site) ? $site->id : $subsite->site_id,

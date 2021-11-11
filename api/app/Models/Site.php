@@ -23,4 +23,12 @@ class Site extends Model
     public function subsites(){
         return $this->hasMany('App\Models\Subsite');
     }
+
+    public function history(){
+        return $this->hasMany('App\Models\History');
+    }
+
+    public function detail(){
+        return $this->hasMany('App\Models\Detail');
+    }
 }

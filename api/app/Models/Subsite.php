@@ -14,4 +14,8 @@ class Subsite extends Model
         'validations',
         'last_score'
     ];
+
+    public function site(){
+        return $this->belongsTo('App\Models\Site');
+    }
 }

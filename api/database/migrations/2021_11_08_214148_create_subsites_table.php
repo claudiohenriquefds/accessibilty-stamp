@@ -16,9 +16,9 @@ class CreateSubsitesTable extends Migration
         Schema::create('subsites', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('site_id');
-            $table->string('url', 100);
+            $table->text('url');
             $table->integer('validations')->default(0);
-            $table->decimal('last_score');
+            $table->decimal('last_score')->nullable();
             $table->timestamps();
 
             $table->foreign('site_id')->references('id')->on('sites')->onDelete('cascade');

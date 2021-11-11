@@ -14,7 +14,8 @@ class Detail extends Model
         'url',
         'element',
         'veredict',
-        'description'
+        'description',
+        'result_code'
     ];
 
     public function detailElements(){

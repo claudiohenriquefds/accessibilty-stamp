@@ -16,11 +16,12 @@ class CreateDetailsTable extends Migration
         Schema::create('details', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('site_id');
-            $table->boolean('substie')->nullable();
+            $table->boolean('subsite')->default(false);
             $table->string('url', 100);
             $table->string('element', 200);
             $table->string('veredict', 100);
             $table->text('description');
+            $table->text('result_code');
             $table->timestamps();
 
             $table->foreign('site_id')->references('id')->on('sites')->onDelete('cascade');

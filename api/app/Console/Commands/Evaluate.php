@@ -15,7 +15,7 @@ class Evaluate extends Command
      *
      * @var string
      */
-    protected $signature = 'evaluate:run {--list} {--sites} {--subsites} {--all}';
+    protected $signature = 'evaluate:run {--list} {--sites} {--site= : The ID of site} {--subsites} {--all}';
 
     /**
      * The console command description.
@@ -41,6 +41,11 @@ class Evaluate extends Command
      */
     public function handle()
     {
+        if($this->option("site")){
+            JobsEvaluate::dispatch(Site::find($this->option("site")));
+            dump("Site in queue.");
+        }
+
         if($this->option("sites")){
             collect(Site::all())->map(function($site) {
                 JobsEvaluate::dispatch($site);

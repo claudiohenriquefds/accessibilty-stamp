@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Services\Util\StampService;
 use App\Models\Site;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -17,6 +18,10 @@ class StampController extends Controller
                 $site = $site ?? Site::find($request->id);
             } else {
                 $site = Site::where('url', 'like', '%' . $request->url . '%')->first();
+            }
+
+            if(is_null($site)){
+                throw new Exception();
             }
 
             $detail['warning'] = $site->detail()->where('veredict', 'warning')->count();

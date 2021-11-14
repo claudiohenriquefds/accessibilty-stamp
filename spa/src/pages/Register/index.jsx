@@ -22,9 +22,9 @@ export default function Register() {
 
          try {
             if(name !== null || email !== null || password !== null){
-                api.post('user/register', { name, email, password }).then((response) => {
+                api.post('register', { name, email, password }).then((response) => {
                     if(response.data.success){
-                        localStorage.setItem(TOKEN_KEY, JSON.parse(response.data.data).authorization_token);
+                        localStorage.setItem(TOKEN_KEY, response.data.data.token);
                         history.push('/dashboard/panel');
                     }else{
                         setError({error: true, message: "Servidor indisponível"});

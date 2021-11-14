@@ -26,9 +26,9 @@ export default function Login() {
 
         try {
             if(email !== null || password !== null){
-                api.post('user/login', { email, password }).then((response) => {
+                api.post('login', { email, password }).then((response) => {
                     if(response.data.success){
-                        localStorage.setItem(TOKEN_KEY, JSON.parse(response.data.data).authorization_token);
+                        localStorage.setItem(TOKEN_KEY, response.data.data.token);
                         history.push('/dashboard/panel');
                     }else{
                         setError({error: true, message: "Credenciais incorretas"});

@@ -16,7 +16,10 @@ import logo from '../../assets/Logo_indigo.svg';
 import talkback from '../../assets/talkback.jpg';
 import './style.css';
 
-const navigation = [{ name: 'Selo', href: '#stamp' }];
+const navigation = [
+    { name: 'Selo', href: '#stamp', animate: false},
+    { name: 'Comparativo GOV', href: '/comparative/gov', animate: true},
+];
 
 const features = [
     {
@@ -101,7 +104,7 @@ const Home = () => (
                                                     href={item.href}
                                                     className="font-medium text-gray-500 hover:text-gray-900"
                                                 >
-                                                    {item.name}
+                                                    <span className={item.animate ? `animate-pulse bg-gray-100 shadow-lg rounded-full p-2` : null}>{item.name}</span>
                                                 </a>
                                             ))}
                                             {isAuthenticated() ? (
@@ -345,7 +348,7 @@ const Home = () => (
                                                         </span>
                                                         <span className="token punctuation">"</span>
                                                         <span className="code-highlight bg-code-highlight">
-                                                            http://34.69.36.49:8080/script.min.js
+                                                            http://localhost:8000/api/script.min.js
                                                         </span>
                                                         <span className="token punctuation">"</span>
                                                     </span>
@@ -374,9 +377,7 @@ const Home = () => (
             Exemplo de como ficará no site.
         </h2>
         <div className="flex justify-center m-10">
-            <div className="w-48">
-                <i id="stampAcessibility" />
-            </div>
+            <i id="stampAcessibility" />
         </div>
         <div className="bg-indigo-600">
             <div className="max-w-7xl mx-auto py-3 px-3 sm:px-6 lg:px-8">

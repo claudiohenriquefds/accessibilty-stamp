@@ -14,9 +14,9 @@ export default function Info({ match }) {
     const history = useHistory();
 
     useEffect(async () => {
-        api.get(`stamp/info?id=${match.params.id}`).then((response) => {
+        api.get(`stamp/info/${match.params.id}`).then((response) => {
             if (response.data.success) {
-                setInfo(JSON.parse(response.data.data));
+                setInfo(response.data.data);
             }else{
                 setLoading(false);
             }
@@ -72,7 +72,15 @@ export default function Info({ match }) {
                                             Média de nota
                                         </dt>
                                         <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                            {info.average !== 'undefined' ? info.average.toFixed(1) : '-'}
+                                            {info.average !== 'undefined' ? info.average : '-'}
+                                        </dd>
+                                    </div>
+                                    <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                        <dt className="text-sm font-medium text-gray-500">
+                                            Quantidade de paginas avaliadas
+                                        </dt>
+                                        <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                            {info.quantity !== 'undefined' ? info.quantity : '-'}
                                         </dd>
                                     </div>
                                     <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
@@ -80,17 +88,13 @@ export default function Info({ match }) {
                                             Data e horário da última avaliação
                                         </dt>
                                         <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                            {info.last_validate}
+                                            {new Date(info.last_validate).toLocaleString()}
                                         </dd>
                                     </div>
                                     <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                                         <dt className="text-sm font-medium text-gray-500">Selo</dt>
                                         <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                            <img
-                                                width="300"
-                                                src={info.stamp}
-                                                alt="Selo de acessibilidade"
-                                            />
+                                            <div className="flex-shrink-0" dangerouslySetInnerHTML={{__html: info.stamp}} />
                                         </dd>
                                     </div>
                                 </dl>

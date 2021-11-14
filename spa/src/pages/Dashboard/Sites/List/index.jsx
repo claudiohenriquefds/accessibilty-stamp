@@ -1,3 +1,4 @@
+/* eslint-disable react/no-danger */
 import React, { useState, useEffect } from 'react';
 
 import { Link, useHistory } from 'react-router-dom';
@@ -12,19 +13,19 @@ const Site = () => {
 
     async function getSites() {
         const sitesArray = [];
-        api.get('site/show').then((response) => {
+        api.get('site').then((response) => {
             if (response.data.success) {
-                const data = JSON.parse(response.data.data);
+                const {data} = response.data;
                 // eslint-disable-next-line array-callback-return
                 data.map((element) => {
                     sitesArray.push({
                         id: element.id,
                         name: element.name,
                         last_score: element.last_score,
-                        grade_average: element.average.toFixed(1),
+                        grade_average: element.average,
                         pages: element.pages,
                         url: element.url,
-                        image: element.stamp
+                        stamp: element.stamp
                     });
                 });
             }
@@ -42,7 +43,7 @@ const Site = () => {
 
     return (
         <>
-            <Navbar current="sites" search="site" />
+            <Navbar current="sites" endpoint="site"/>
             <div className="grid grid-cols-1 md:grid-cols-1">
                 <div className="flex flex-col m-3">
                     <div className="w-full flex flex-row-reverse">
@@ -138,13 +139,7 @@ const Site = () => {
                                                     </div>
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                                    <div className="flex-shrink-0">
-                                                        <img
-                                                            className="min-w-full max-w-none w-48"
-                                                            src={site.image}
-                                                            alt=""
-                                                        />
-                                                    </div>
+                                                    <div className="flex-shrink-0" dangerouslySetInnerHTML={{__html: site.stamp}} />
                                                 </td>
                                             </tr>
                                         ))}

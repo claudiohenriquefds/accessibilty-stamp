@@ -20,7 +20,7 @@ const NewSite = () => {
 
         try {
             if (name !== null || url !== null) {
-                api.post('site/store', { name, url }).then((response) => {
+                api.post('site', { name, url }).then((response) => {
                     if (response.data.success) {
                         history.push('/dashboard/sites');
                     } else {
@@ -43,7 +43,7 @@ const NewSite = () => {
 
     return (
         <>
-            <Navbar current="sites" />
+            <Navbar current="sites" endpoint="site"/>
             <div className="grid grid-cols-1 md:grid-cols-1">
                 <div className="flex flex-col m-3">
                     <div className="mt-5 md:mt-0 md:col-span-2">

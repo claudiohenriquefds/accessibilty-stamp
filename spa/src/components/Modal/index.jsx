@@ -61,7 +61,7 @@ const Modal = () => {
                                                 {content.map((elementDetailed) => (
                                                     <div className="border-b border-gray-400">
                                                         <span className="block border-b border-gray-200 text-xs"><strong>Localização:</strong>{elementDetailed.pointer}</span>
-                                                        <span className="block border-b border-gray-200 text-xs break-all"><strong>Elemento:</strong>{elementDetailed.htmlCode}</span>
+                                                        <span className="block border-b border-gray-200 text-xs break-all"><strong>Elemento:</strong>{elementDetailed.html_code}</span>
                                                     </div>
                                                 ))}
                                             </p>

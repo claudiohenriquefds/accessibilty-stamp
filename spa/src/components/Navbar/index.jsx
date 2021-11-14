@@ -11,10 +11,12 @@ import api from '../../services/api';
 import stampLogo from '../../assets/Logo.svg';
 import PanelContext from '../../context/PanelContext';
 import HistoryContext from '../../context/HistoryContext';
+import PageCurrentContext from '../../context/PageCurrentContext';
 
-const Navbar = ({ current, filter, search, endpoint }) => {
+const Navbar = ({ current, filter, search, endpoint}) => {
     const { setDataPanel } = useContext(PanelContext);
     const { setDataHistory } = useContext(HistoryContext);
+    const { pageCurrent } = useContext(PageCurrentContext);
     const history = useHistory();
 
     const [sites, setSites] = useState([{ id: 0, name: 'Selecione uma opção.' }]);
@@ -36,9 +38,9 @@ const Navbar = ({ current, filter, search, endpoint }) => {
         mountedSites = [{ id: 0, name: 'Selecione uma opção.', unavailable: true }];
         setSites([{ id: 0, name: 'Selecione uma opção.', unavailable: true }]);
 
-        api.get('site/show').then((content) => {
+        api.get('site').then((content) => {
             // eslint-disable-next-line array-callback-return
-            JSON.parse(content.data.data).map((e) => {
+            content.data.data.map((e) => {
                 mountedSites.push({ id: e.id, name: e.name });
             });
             setSites(mountedSites);
@@ -50,9 +52,8 @@ const Navbar = ({ current, filter, search, endpoint }) => {
 
     }
 
-    async function handleSelect(e) {
-        setSelected(e);
-        api.post(endpoint, { id: e.id }).then((response) => {
+    function doRequest(e){
+        api.get(`${endpoint}/${e.id}${pageCurrent}`).then((response) => {
             if (response.data.success) {
                 if(current === 'panel'){
                     setDataPanel(response.data);
@@ -70,11 +71,20 @@ const Navbar = ({ current, filter, search, endpoint }) => {
         });
     }
 
+    async function handleSelect(e) {
+        setSelected(e);
+        doRequest(e);
+    }
+
     useEffect(() => {
         if (filter) {
             mountSites();
         }
     }, []);
+
+    useEffect(() => {
+        doRequest(selected);
+    }, [pageCurrent])
 
     return (
         <Disclosure as="nav" className="bg-gray-800">

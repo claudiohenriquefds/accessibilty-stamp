@@ -28,7 +28,7 @@ const Panel = () => {
         dataPanel.data.history_year.map((element) => {
             const date = new Date(element.date);
             labelsYear.push(date.getMonth()+1);
-            averageSiteYear.push(element.average.toFixed(1));
+            averageSiteYear.push(element.average);
         });
 
         const datasetMonth = {
@@ -93,7 +93,7 @@ const Panel = () => {
                             Média de nota (Todas as páginas encontradas):
                         </span>
                         <span className="block text-lg text-gray-900">
-                            {dataPanel.data.average.toFixed(1)}
+                            {dataPanel.data.average}
                         </span>
                     </div>
                     <div className=" border border-gray-900 rounded-sm p-5 m-3 shadow">
@@ -117,13 +117,13 @@ const Panel = () => {
                 <div className="grid grid-cols-1 md:grid-cols-3">
                     <div className=" border border-gray-900 rounded-sm p-5 m-3 shadow bg-yellow-300">
                         <span className="block text-sm text-gray-900">
-                            Warning
+                            Warning (Elementos que requerem atenção)
                         </span>
                         <span className="block text-lg text-gray-900">{dataPanel.data.warning}</span>
                     </div>
                     <div className=" border border-gray-900 rounded-sm p-5 m-3 shadow bg-green-300">
                         <span className="block text-sm text-gray-900">
-                            Passed
+                            Passed (Elementos que passaram na avaliação)
                         </span>
                         <span className="block text-lg text-gray-900">
                             {dataPanel.data.passed}
@@ -131,7 +131,7 @@ const Panel = () => {
                     </div>
                     <div className=" border border-gray-900 rounded-sm p-5 m-3 shadow bg-red-300">
                         <span className="block text-sm text-gray-900">
-                            Failed
+                            Failed (Elementos que falharam na avaliação)
                         </span>
                         <span className="block text-lg text-gray-900">
                             {dataPanel.data.failed}

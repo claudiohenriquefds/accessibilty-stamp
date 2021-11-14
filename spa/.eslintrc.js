@@ -27,6 +27,7 @@ module.exports = {
     'react/jsx-filename-extension': ['off'],
     'react/prop-types': ['off'],
     'no-return-assign': ['off'],
+    'react/jsx-no-bind': ['off'],
     "import/no-unresolved": "off"
   },
 };

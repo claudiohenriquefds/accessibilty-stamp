@@ -10,6 +10,8 @@ import Register from './pages/Register';
 import Info from './pages/Info';
 import Dashboard from './pages/Dashboard';
 import Home from './pages/Home';
+import Comparative from './pages/Comparative';
+
 import { isAuthenticated } from './services/auth';
 
 const PrivateRoute = ({ Component, ...rest }) => (
@@ -27,6 +29,7 @@ const Routes = () => (
         <BrowserRouter>
             <Switch>
                 <Route path="/" exact component={Home} />
+                <Route path="/comparative/gov" exact component={Comparative} />
                 <Route path="/login" exact component={Login} />
                 <Route path="/register" exact component={Register} />
                 <Route path="/info/:id" exact component={Info} />

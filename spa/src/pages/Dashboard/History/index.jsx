@@ -1,18 +1,47 @@
-import React, { useContext } from 'react';
+/* eslint-disable array-callback-return */
+/* eslint-disable no-nested-ternary */
+import React, { useContext } from 'react'
+import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/solid';
 
 import Navbar from '../../../components/Navbar';
 import HistoryContext from '../../../context/HistoryContext';
+import PageCurrentContext from '../../../context/PageCurrentContext';
 
 import logo from '../../../assets/Logo_indigo.svg';
 
 const History = () => {
     const { dataHistory } = useContext(HistoryContext);
 
+    const { setPageCurrent } = useContext(PageCurrentContext);
+
+    const status = {
+        1: { text: 'Em andamento', class: 'bg-yellow-100 text-yellow-800' },
+        2: { text: 'Avaliação concluida', class: 'bg-green-100 text-green-800' },
+        3: { text: 'Falha na avaliação', class: 'bg-red-100 text-red-800' },
+    };
+
     function classNames(...classes) {
         return classes.filter(Boolean).join(' ');
     }
 
     if (dataHistory != null) {
+        const {data} = dataHistory.data;
+        let mountedData = [{}];
+        if(data instanceof Array){
+            mountedData = data;
+        }else{
+            mountedData = [];
+            Object.keys(data).map((key) => {
+                mountedData.push({
+                    url: data[key].utl,
+                    name: data[key].name,
+                    score: data[key].score,
+                    average: data[key].average,
+                    status: data[key].status,
+                    created_at: data[key].created_at
+                });
+            });
+        }
         return (
             <>
                 <Navbar current="history" filter="true" endpoint="history" />
@@ -57,7 +86,7 @@ const History = () => {
                                             </tr>
                                         </thead>
                                         <tbody className="bg-white divide-y divide-gray-200">
-                                            {JSON.parse(dataHistory.data).map((site) => (
+                                            {mountedData.map((site) => (
                                                 <tr key={site.url}>
                                                     <td className="px-6 py-4 whitespace-nowrap">
                                                         <div className="flex items-center">
@@ -73,28 +102,86 @@ const History = () => {
                                                     </td>
                                                     <td className="px-6 py-4 whitespace-nowrap">
                                                         <div className="text-sm text-gray-900">
-                                                            {typeof site.last_score !== 'undefined' ? site.last_score : "-"}
+                                                            {typeof site.score !== 'undefined'
+                                                                ? site.score
+                                                                : '-'}
                                                         </div>
                                                     </td>
                                                     <td className="px-6 py-4 whitespace-nowrap">
                                                         <div className="text-sm text-gray-900">
-                                                            {typeof site.average !== 'undefined' ? site.average.toFixed(1) : "-"}
+                                                            {typeof site.average !== 'undefined'
+                                                                ? site.average
+                                                                : '-'}
                                                         </div>
                                                     </td>
                                                     <td className="px-6 py-4 whitespace-nowrap">
-                                                        <span className={classNames("px-2 inline-flex text-xs leading-5 font-semibold rounded-full", site.status === 1 ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800")}>
-                                                            {site.status === 1 ? "Avaliação concluida" : "Falha na avaliação"}
+                                                        <span
+                                                            className={classNames(
+                                                                'px-2 inline-flex text-xs leading-5 font-semibold rounded-full',
+                                                                status[site.status].class,
+                                                            )}
+                                                        >
+                                                            {status[site.status].text}
                                                         </span>
                                                     </td>
                                                     <td className="px-6 py-4 whitespace-nowrap">
                                                         <div className="text-sm text-gray-900">
-                                                            {typeof site.date !== 'undefined' ? site.date :  "-"}
+                                                            {typeof site.created_at !== 'undefined'
+                                                                ? new Date(
+                                                                      site.created_at,
+                                                                  ).toLocaleString()
+                                                                : '-'}
                                                         </div>
                                                     </td>
                                                 </tr>
                                             ))}
                                         </tbody>
                                     </table>
+                                    <div className="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
+                                        <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+                                            <div>
+                                                <p className="text-sm text-gray-700">
+                                                    Mostrando <span className="font-medium">{dataHistory.data.from ?? 0}</span> a{' '}
+                                                    <span className="font-medium">{dataHistory.data.to ?? 0}</span> de{' '}
+                                                    <span className="font-medium">{dataHistory.data.total ?? 0}</span> resultados
+                                                </p>
+                                            </div>
+                                            <div>
+                                                <nav
+                                                    className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px"
+                                                    aria-label="Pagination"
+                                                >
+                                                    {dataHistory.data.links.map((element) => (
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => {
+                                                                setPageCurrent(element.url);
+                                                            }}
+                                                            className={element.active ? "z-10 bg-indigo-50 border-indigo-500 text-indigo-600 relative inline-flex items-center px-4 py-2 border text-sm font-medium" : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium"}
+                                                        >
+                                                            {element.label === "Next &raquo;" ? (
+                                                                <>
+                                                                    <span className="sr-only">Próximo</span>
+                                                                    <ChevronRightIcon
+                                                                        className="h-5 w-5"
+                                                                        aria-hidden="true"
+                                                                    />
+                                                                </>
+                                                            ) : element.label === "&laquo; Previous" ? (
+                                                                <>
+                                                                    <span className="sr-only">Anterior</span>
+                                                                    <ChevronLeftIcon
+                                                                        className="h-5 w-5"
+                                                                        aria-hidden="true"
+                                                                    />
+                                                                </>
+                                                            ) : element.label}
+                                                        </button>
+                                                    ))}
+                                                </nav>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>

@@ -123,6 +123,8 @@ return [
 
     'cipher' => 'AES-256-CBC',
 
+    'endpoint_info' => env('ENDPOINT_INFO'),
+
     /*
     |--------------------------------------------------------------------------
     | Autoloaded Service Providers

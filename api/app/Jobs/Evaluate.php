@@ -36,6 +36,6 @@ class Evaluate implements ShouldQueue
      */
     public function handle()
     {
-        AccessMonitorService::doEvalueate($this->site, $this->subsite);
+        AccessMonitorService::doEvaluate($this->site, $this->subsite);
     }
 }

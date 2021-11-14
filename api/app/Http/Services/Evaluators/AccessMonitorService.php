@@ -12,13 +12,15 @@ use Carbon\Carbon;
 use DOMDocument;
 use Exception;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\DB;
 
 class AccessMonitorService
 {
-    public static function doEvalueate(Site $site = null, Subsite $subsite = null)
+    public static function doEvaluate(Site $site = null, Subsite $subsite = null)
     {
         dump("Evaluating: ".($site->url ?? $subsite->url));
         try {
+            DB::beginTransaction();
             if (!is_null($site)) {
                 $response = Http::timeout(120)->get('https://accessmonitor.acessibilidade.gov.pt/api/amp/eval/' . urlencode($site->url));
             }
@@ -132,6 +134,7 @@ class AccessMonitorService
                     }
                 }
             }
+            DB::commit();
 
             Log::create([
                 'site_id' => !is_null($site) ? $site->id : $subsite->site_id,
@@ -139,10 +142,11 @@ class AccessMonitorService
                 'is_subsite' => !is_null($site) ? false : true,
                 'url' => !is_null($site) ? $site->url : $subsite->url,
                 'status' => 3,
-                'data' => $response->json()
+                'data' => json_encode($response->json())
             ]);
 
         } catch (\Exception $exception) {
+            DB::rollback();
             Log::create([
                 'site_id' => !is_null($site) ? $site->id : $subsite->site_id,
                 'score' => 0,

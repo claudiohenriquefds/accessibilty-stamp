@@ -1,24 +1,17 @@
 /* eslint-disable array-callback-return */
 import React, { Fragment, useEffect, useState } from 'react';
 import Chart from 'react-apexcharts';
-// import { useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 
 import { Disclosure } from '@headlessui/react';
 import { MenuIcon, XIcon } from '@heroicons/react/outline';
 import { ArrowLeftIcon } from '@heroicons/react/solid';
 import spinner from '../../assets/Spinner_indigo.svg';
 import logo from '../../assets/Logo_indigo.svg';
-
-import Site from '../Dashboard/Sites/List';
+import logout from '../../services/auth';
 
 import api from '../../services/api';
 
-const user = {
-    name: 'Tom Cook',
-    email: 'tom@example.com',
-    imageUrl:
-        'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-};
 const navigation = [
     { name: 'Início', href: '/', current: false },
     { name: 'Entrar', href: '/login', current: false },
@@ -32,7 +25,7 @@ function classNames(...classes) {
 const Comparative = () => {
     const [sites, setSites] = useState(null);
     const [loading, setLoading] = useState(true);
-    // const history = useHistory();
+    const history = useHistory();
 
     useEffect(async () => {
         api.get('comparative/gov')
@@ -46,7 +39,7 @@ const Comparative = () => {
             })
             .catch((err) => {
                 console.log(err);
-                // logout(history);
+                logout(history);
             });
     }, []);
 
@@ -110,8 +103,8 @@ const Comparative = () => {
                                             <div className="flex-shrink-0">
                                                 <img
                                                     className="h-8 w-8"
-                                                    src="https://tailwindui.com/img/logos/workflow-mark-indigo-500.svg"
-                                                    alt="Workflow"
+                                                    src={logo}
+                                                    alt="Logo do accessibility-stamp"
                                                 />
                                             </div>
                                             <div className="hidden md:block">
@@ -175,25 +168,6 @@ const Comparative = () => {
                                                 {item.name}
                                             </Disclosure.Button>
                                         ))}
-                                    </div>
-                                    <div className="pt-4 pb-3 border-t border-gray-700">
-                                        <div className="flex items-center px-5">
-                                            <div className="flex-shrink-0">
-                                                <img
-                                                    className="h-10 w-10 rounded-full"
-                                                    src={user.imageUrl}
-                                                    alt=""
-                                                />
-                                            </div>
-                                            <div className="ml-3">
-                                                <div className="text-base font-medium leading-none text-white">
-                                                    {user.name}
-                                                </div>
-                                                <div className="text-sm font-medium leading-none text-gray-400">
-                                                    {user.email}
-                                                </div>
-                                            </div>
-                                        </div>
                                     </div>
                                 </Disclosure.Panel>
                             </>
@@ -268,7 +242,7 @@ const Comparative = () => {
                                                                         <div className="flex items-center">
                                                                             <div className="ml-4">
                                                                                 <div className="text-sm font-medium text-gray-900">
-                                                                                    {Site.name}
+                                                                                    {site.name}
                                                                                 </div>
                                                                                 <div className="text-sm text-gray-500">
                                                                                     {site.url}

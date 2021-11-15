@@ -62,6 +62,7 @@ class AccessMonitorService
                         && !str_contains($subsite_new, 'youtube')
                         && !str_contains($subsite_new, 'instagram')
                         && !str_contains($subsite_new, 'linkedin')
+                        && !str_contains($subsite_new, 'goo.')
                     ) {
                         $subsiteModel = $site->subsites()->firstOrCreate([
                             'url' => $subsite_new

@@ -43,7 +43,11 @@ class AccessMonitorService
 
                 foreach ($hrefs as $href) {
                     if(!str_contains($href->getAttribute('href'), $site->url)){
-                        $subsite_new = $site->url . '/' . $href->getAttribute('href');
+                        if(str_contains($href->getAttribute('href'), 'http')){
+                            $subsite_new = $href->getAttribute('href');
+                        }else{
+                            $subsite_new = $site->url . '/' . $href->getAttribute('href');
+                        }
                     }else{
                         $subsite_new = $href->getAttribute('href');
                     }
@@ -53,6 +57,11 @@ class AccessMonitorService
                         && !str_contains($subsite_new, 'mailto')
                         && $subsite_new != $site->url
                         && $subsite_new != $site->url . '/'
+                        && !str_contains($subsite_new, 'facebook')
+                        && !str_contains($subsite_new, 'twitter')
+                        && !str_contains($subsite_new, 'youtube')
+                        && !str_contains($subsite_new, 'instagram')
+                        && !str_contains($subsite_new, 'linkedin')
                     ) {
                         $subsiteModel = $site->subsites()->firstOrCreate([
                             'url' => $subsite_new

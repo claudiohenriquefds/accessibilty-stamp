@@ -63,6 +63,9 @@ class AccessMonitorService
                         && !str_contains($subsite_new, 'instagram')
                         && !str_contains($subsite_new, 'linkedin')
                         && !str_contains($subsite_new, 'goo.')
+                        && !str_contains($subsite_new, 'flickr.')
+                        && !str_contains($subsite_new, 'bit.ly')
+                        && !str_contains($subsite_new, 'google.')
                     ) {
                         $subsiteModel = $site->subsites()->firstOrCreate([
                             'url' => $subsite_new

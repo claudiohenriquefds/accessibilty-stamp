@@ -9,6 +9,7 @@ import spinner from '../../../../assets/Spinner.svg';
 const NewSite = () => {
     const [name, setName] = useState(null);
     const [url, setUrl] = useState(null);
+    const [type, setType] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState({ error: false });
 
@@ -20,17 +21,19 @@ const NewSite = () => {
 
         try {
             if (name !== null || url !== null) {
-                api.post('site', { name, url }).then((response) => {
-                    if (response.data.success) {
-                        history.push('/dashboard/sites');
-                    } else {
-                        setError({ error: true, message: 'Falha ao registrar site' });
-                        setLoading(false);
-                    }
-                }).catch((err) => {
-                    console.log(err);
-                    logout(history)
-                });
+                api.post('site', { name, url, type })
+                    .then((response) => {
+                        if (response.data.success) {
+                            history.push('/dashboard/sites');
+                        } else {
+                            setError({ error: true, message: 'Falha ao registrar site' });
+                            setLoading(false);
+                        }
+                    })
+                    .catch((err) => {
+                        console.log(err);
+                        logout(history);
+                    });
             } else {
                 setError({ error: true, message: 'Campos obrigatórios não foram informados.' });
                 setLoading(false);
@@ -43,14 +46,16 @@ const NewSite = () => {
 
     return (
         <>
-            <Navbar current="sites" endpoint="site"/>
+            <Navbar current="sites" endpoint="site" />
             <div className="grid grid-cols-1 md:grid-cols-1">
                 <div className="flex flex-col m-3">
                     <div className="mt-5 md:mt-0 md:col-span-2">
                         <form onSubmit={handleSubmit}>
                             <div className="shadow overflow-hidden sm:rounded-md">
                                 <div className="px-4 py-5 bg-white sm:p-6">
-                                <p className="mt-2 m-5 text-sm text-gray-600">* Representa campos obrigatórios.</p>
+                                    <p className="mt-2 m-5 text-sm text-gray-600">
+                                        * Representa campos obrigatórios.
+                                    </p>
                                     <div className="grid grid-cols-6 gap-6">
                                         <div className="col-span-6 sm:col-span-3">
                                             <label
@@ -84,6 +89,27 @@ const NewSite = () => {
                                                 value={url}
                                                 onChange={(e) => setUrl(e.target.value)}
                                             />
+                                        </div>
+
+                                        <div className="col-span-6 sm:col-span-3">
+                                            <label
+                                                htmlFor="id"
+                                                className="block text-sm font-medium text-gray-700"
+                                            >
+                                                Tipo do site *
+                                            </label>
+                                            <select
+                                                id="type"
+                                                name="type"
+                                                autoComplete="type-name"
+                                                value={type}
+                                                onChange={(e) => setType(e.target.value)}
+                                                className="mt-1 block w-full py-2 px-3 border focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 bg-white rounded-md shadow-sm focus:outline-none sm:text-sm"
+                                            >
+                                                <option value="1">Administração publica</option>
+                                                <option value="2">Administração privada</option>
+                                                <option value="3">Outro</option>
+                                            </select>
                                         </div>
                                     </div>
                                 </div>

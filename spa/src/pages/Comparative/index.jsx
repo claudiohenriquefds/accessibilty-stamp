@@ -1,3 +1,4 @@
+/* eslint-disable react/no-danger */
 /* eslint-disable array-callback-return */
 import React, { Fragment, useEffect, useState } from 'react';
 import Chart from 'react-apexcharts';
@@ -8,7 +9,7 @@ import { MenuIcon, XIcon } from '@heroicons/react/outline';
 import { ArrowLeftIcon } from '@heroicons/react/solid';
 import spinner from '../../assets/Spinner_indigo.svg';
 import logo from '../../assets/Logo_indigo.svg';
-import logout from '../../services/auth';
+import { logout } from '../../services/auth';
 
 import api from '../../services/api';
 
@@ -43,15 +44,16 @@ const Comparative = () => {
             });
     }, []);
 
+    const seriesAverage = [];
     const series = [];
+    const datesAverage = [];
     const dates = [];
     let state;
+    let stateAverage;
     if (sites !== null) {
-        sites.map((site) => {
-            console.log(site);
+        sites.comparative.map((site) => {
             const data = [];
             site.data.map((scores) => {
-                console.log(scores);
                 data.push(scores.average);
             });
 
@@ -63,6 +65,20 @@ const Comparative = () => {
                 name: site.name,
                 data,
             });
+        });
+
+        const dataAverage = [];
+        sites.average.map((site) => {
+
+            dataAverage.push(site.average);
+
+            datesAverage.push(site.created_at);
+
+        });
+
+        seriesAverage.push({
+            name: 'Média',
+            data: dataAverage,
         });
 
         state = {
@@ -80,6 +96,30 @@ const Comparative = () => {
                 xaxis: {
                     type: 'datetime',
                     categories: dates,
+                },
+                tooltip: {
+                    x: {
+                        format: 'dd/MM/yy HH:mm',
+                    },
+                },
+            },
+        };
+
+        stateAverage = {
+            series: seriesAverage,
+            options: {
+                chart: {
+                    type: 'area',
+                },
+                dataLabels: {
+                    enabled: true,
+                },
+                stroke: {
+                    curve: 'smooth',
+                },
+                xaxis: {
+                    type: 'datetime',
+                    categories: datesAverage,
                 },
                 tooltip: {
                     x: {
@@ -176,8 +216,8 @@ const Comparative = () => {
 
                     <header className="bg-white shadow">
                         <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                            <h1 className="text-3xl font-bold text-gray-900">
-                                Comparativo de sites do governo
+                            <h1 className="text-3xl font-normal text-gray-900">
+                                Acompanhamento de portais e sitios eletrônicos de administração publica
                             </h1>
                         </div>
                     </header>
@@ -186,12 +226,27 @@ const Comparative = () => {
                             {/* Replace with your content */}
                             <div className="grid grid-cols-1 gap-4">
                                 <div className="">
+                                    <h1 className="text-2xl font-light text-gray-900">
+                                        Media de acessibilidade
+                                    </h1>
+                                    <Chart
+                                        options={stateAverage.options}
+                                        series={stateAverage.series}
+                                        type="area"
+                                        width="100%"
+                                        height="400"
+                                    />
+                                </div>
+                                <div className="">
+                                    <h1 className="text-2xl font-light text-gray-900">
+                                        Acessibilidade por site
+                                    </h1>
                                     <Chart
                                         options={state.options}
                                         series={state.series}
                                         type="area"
                                         width="100%"
-                                        height="100%"
+                                        height="400"
                                     />
                                 </div>
                                 <div>
@@ -236,7 +291,7 @@ const Comparative = () => {
                                                             </tr>
                                                         </thead>
                                                         <tbody className="bg-white divide-y divide-gray-200">
-                                                            {sites.map((site) => (
+                                                            {sites.comparative.map((site) => (
                                                                 <tr key={site.name}>
                                                                     <td className="px-6 py-4 whitespace-nowrap">
                                                                         <div className="flex items-center">
@@ -309,7 +364,7 @@ const Comparative = () => {
                                         alt="Logotipo do Acessibility Stamp, contendo o icone de uma pessoa entre dois parenteses angulares (Exemplificação de TAG HTML)"
                                     />
                                     <h2 className="mt-6 text-center text-3xl font-medium text-gray-900">
-                                        Sites do governo não encontrados.
+                                        Portais e sitios eletrônicos de administração publica não foram encontrados.
                                     </h2>
                                     <a
                                         className="flex justify-center align-middle text-indigo-500 group-hover:text-indigo-600"

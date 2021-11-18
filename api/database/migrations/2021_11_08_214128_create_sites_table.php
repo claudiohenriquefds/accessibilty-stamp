@@ -18,6 +18,7 @@ class CreateSitesTable extends Migration
             $table->unsignedBigInteger('user_id');
             $table->string('name', 100);
             $table->text('url');
+            $table->integer('type');
             $table->integer('validations')->nullable()->default(0);
             $table->decimal('last_score')->nullable();
             $table->decimal('average')->nullable();

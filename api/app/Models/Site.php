@@ -13,6 +13,7 @@ class Site extends Model
         'user_id',
         'name',
         'url',
+        'type',
         'validations',
         'last_score',
         'average',

@@ -117,4 +117,31 @@ class SiteController extends Controller
             ], 400);
         }
     }
+
+    public function delete($id){
+        try{
+            if(!isset($id)){
+                throw new \Exception("ID can't be null");
+            }
+
+            Site::where('id', $id)->delete();
+
+            return response()->json([
+                'success' => true,
+                'error' => null,
+                'data' => null
+            ], 200);
+        }catch(\Exception $exception){
+            return response()->json([
+                'success' => false,
+                'error' => [
+                    'file' => $exception->getFile(),
+                    'line' => $exception->getLine(),
+                    'message' => $exception->getMessage(),
+                    'trace' => $exception->getTraceAsString()
+                ],
+                'data' => null
+            ], 400);
+        }
+    }
 }

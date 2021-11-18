@@ -21,6 +21,7 @@ Route::group(['middleware' => ['auth:sanctum']], function(){
     Route::group(['prefix' => 'site'], function(){
         Route::post('/', [SiteController::class, 'store']);
         Route::get('/', [SiteController::class, 'index']);
+        Route::delete('/{site_id}', [SiteController::class, 'delete']);
         Route::get('/{site_id}', [SiteController::class, 'show']);
         Route::get('/details/{site_id}', [SiteController::class, 'getDetailed']);
     });

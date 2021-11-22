@@ -45,7 +45,6 @@ class DataController extends Controller
     public function comparativeGov(){
         try{
             $sites = Site::where('type', 1)->orderBy('average', 'desc')->limit(10)->get();
-            $sitesAverage = Site::where('type', 1)->get();
 
             collect($sites)->map(function($site){
                 $site->average = $site->history()->orderBy('id', 'desc')->first()->average ?? 0;
@@ -57,8 +56,8 @@ class DataController extends Controller
                 $site->dates = $site->history()->whereMonth('created_at', Carbon::now()->format('m'))->select('created_at as date')->get()->toArray() ?? [];
             });
 
-            $sitesAverage = History::join('sites as s', 's.id', '=', 'histories.id')
-                ->select(DB::raw('avg(score) as average'), 'histories.created_at')
+            $sitesAverage = History::join('sites as s', 's.id', '=', 'histories.site_id')
+                ->select(DB::raw('round(avg(score), 2) as average'), 'histories.created_at')
                 ->where('s.type', 1)
                 ->groupBy(DB::raw('DATE_FORMAT(histories.created_at, "%Y-%m-%d")'))
                 ->get();

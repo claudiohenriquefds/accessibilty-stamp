@@ -11,10 +11,12 @@ import api from '../../services/api';
 import stampLogo from '../../assets/Logo.svg';
 import PanelContext from '../../context/PanelContext';
 import HistoryContext from '../../context/HistoryContext';
+import PageCurrentContext from '../../context/PageCurrentContext';
 
-const Navbar = ({ current, filter, search, endpoint }) => {
+const Navbar = ({ current, filter, search, endpoint}) => {
     const { setDataPanel } = useContext(PanelContext);
     const { setDataHistory } = useContext(HistoryContext);
+    const { pageCurrent } = useContext(PageCurrentContext);
     const history = useHistory();
 
     const [sites, setSites] = useState([{ id: 0, name: 'Selecione uma opção.' }]);
@@ -36,30 +38,42 @@ const Navbar = ({ current, filter, search, endpoint }) => {
         mountedSites = [{ id: 0, name: 'Selecione uma opção.', unavailable: true }];
         setSites([{ id: 0, name: 'Selecione uma opção.', unavailable: true }]);
 
-        const response = await api.get('site/show');
-        const sitesResponse = JSON.parse(response.data.data);
-        // eslint-disable-next-line array-callback-return
-        sitesResponse.map((e) => {
-            mountedSites.push({ id: e.id, name: e.name });
+        api.get('site').then((content) => {
+            // eslint-disable-next-line array-callback-return
+            content.data.data.map((e) => {
+                mountedSites.push({ id: e.id, name: e.name });
+            });
+            setSites(mountedSites);
+        }).catch((err) => {
+            console.log(err);
+            logout(history)
         });
 
-        setSites(mountedSites);
+
+    }
+
+    function doRequest(e){
+        api.get(`${endpoint}/${e.id}${pageCurrent}`).then((response) => {
+            if (response.data.success) {
+                if(current === 'panel'){
+                    setDataPanel(response.data);
+                }
+
+                if(current === 'history'){
+                    setDataHistory(null);
+                    setDataHistory(response.data);
+                }
+
+            }
+        }).catch((err) => {
+            console.log(err);
+            logout(history);
+        });
     }
 
     async function handleSelect(e) {
         setSelected(e);
-        const response = await api.post(endpoint, { id: e.id });
-        if (response.data.success) {
-            if(current === 'panel'){
-                setDataPanel(response.data);
-            }
-
-            if(current === 'history'){
-                setDataHistory(null);
-                setDataHistory(response.data);
-            }
-
-        }
+        doRequest(e);
     }
 
     useEffect(() => {
@@ -67,6 +81,10 @@ const Navbar = ({ current, filter, search, endpoint }) => {
             mountSites();
         }
     }, []);
+
+    useEffect(() => {
+        doRequest(selected);
+    }, [pageCurrent])
 
     return (
         <Disclosure as="nav" className="bg-gray-800">

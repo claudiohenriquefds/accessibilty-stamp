@@ -31,6 +31,12 @@ public class SiteController {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private DetailRepository detailRepository;
+
+    @Autowired
+    private DetailElementRepository detailElementRepository;
+
     @PostMapping("/store")
     public String store(@RequestBody String requestBody, @RequestHeader("Authorization") String authorization) throws JSONException, IOException {
         JSONObject body = new JSONObject(requestBody);
@@ -219,6 +225,51 @@ public class SiteController {
             jsonResponse.put("success", false);
             jsonResponse.put("data", null);
             jsonResponse.put("errors", errors);
+        }
+
+        return jsonResponse.toString();
+    }
+
+    @PostMapping("/get-detailed")
+    public String getDetailed(@RequestBody String requestBody, @RequestHeader("Authorization") String authorization) throws JSONException {
+        UserEntity userEntity = userRepository.findByToken(authorization.replaceAll("Bearer ",""));
+        JSONObject body = new JSONObject(requestBody);
+        SiteEntity siteEntity = siteRepository.findSiteEntityByIdAndUserId(Long.parseLong(body.get("id").toString()), userEntity.getId());
+        List<DetailEntity> detailEntities = detailRepository.findDetailBySiteId(siteEntity.getId());
+        JSONObject jsonResponse = new JSONObject();
+
+        try{
+            JSONArray detailArray = new JSONArray();
+            for(int contDetailArray = 0; contDetailArray < detailEntities.toArray().length; contDetailArray++){
+                JSONObject jsonDetail = new JSONObject();
+
+                jsonDetail.put("element", detailEntities.get(contDetailArray).getElement());
+                jsonDetail.put("veredict", detailEntities.get(contDetailArray).getVeredict());
+                jsonDetail.put("url", detailEntities.get(contDetailArray).getUrl());
+                jsonDetail.put("description", detailEntities.get(contDetailArray).getDescription());
+
+                List<DetailElementEntity> detailElementEntities = detailEntities.get(contDetailArray).getDetailElementEntities();
+                JSONArray jsonDetailElementArray = new JSONArray();
+                for(int contDetailElement = 0; contDetailElement < detailElementEntities.toArray().length; contDetailElement++){
+                    JSONObject jsonDetailElement = new JSONObject();
+
+                    jsonDetailElement.put("htmlCode", detailElementEntities.get(contDetailElement).getHtmlCode());
+                    jsonDetailElement.put("pointer", detailElementEntities.get(contDetailElement).getPointer());
+
+                    jsonDetailElementArray.put(jsonDetailElement);
+                }
+
+                jsonDetail.put("elements_detailed", jsonDetailElementArray);
+                detailArray.put(jsonDetail);
+            }
+
+            jsonResponse.put("success", true);
+            jsonResponse.put("data", detailArray);
+            jsonResponse.put("errors", null);
+        }catch(JSONException e){
+            jsonResponse.put("success", false);
+            jsonResponse.put("data", null);
+            jsonResponse.put("errors", e);
         }
 
         return jsonResponse.toString();

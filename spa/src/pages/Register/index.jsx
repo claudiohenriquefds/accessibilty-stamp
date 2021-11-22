@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { LockClosedIcon, ArrowLeftIcon, HomeIcon } from '@heroicons/react/solid';
 
-import { TOKEN_KEY } from '../../services/auth';
+import { TOKEN_KEY, logout } from '../../services/auth';
 import api from '../../services/api';
 import logo from '../../assets/Logo_indigo.svg';
 import spinner from '../../assets/Spinner.svg';
@@ -22,14 +22,18 @@ export default function Register() {
 
          try {
             if(name !== null || email !== null || password !== null){
-                const response = await api.post('user/register', { name, email, password });
-                if(response.data.success){
-                    localStorage.setItem(TOKEN_KEY, JSON.parse(response.data.data).authorization_token);
-                    history.push('/dashboard/panel');
-                }else{
-                    setError({error: true, message: "Servidor indisponível"});
-                    setLoading(false);
-                }
+                api.post('register', { name, email, password }).then((response) => {
+                    if(response.data.success){
+                        localStorage.setItem(TOKEN_KEY, response.data.data.token);
+                        history.push('/dashboard/panel');
+                    }else{
+                        setError({error: true, message: "Servidor indisponível"});
+                        setLoading(false);
+                    }
+                }).catch((err) => {
+                    console.log(err);
+                    logout(history)
+                });
             }else{
                 setError({error: true, message: "Campos obrigatórios não foram informados."});
                 setLoading(false);

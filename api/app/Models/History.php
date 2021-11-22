@@ -12,6 +12,7 @@ class History extends Model
     protected $fillable = [
         'score',
         'average',
-        'status'
+        'status',
+        'date'
     ];
 }

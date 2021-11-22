@@ -19,6 +19,7 @@ class CreateHistoriesTable extends Migration
             $table->decimal('score')->nullable();
             $table->decimal('average')->nullable();
             $table->integer('status');
+            $table->date('date')->nullable();
             $table->timestamps();
 
             $table->foreign('site_id')->references('id')->on('sites')->onDelete('cascade');

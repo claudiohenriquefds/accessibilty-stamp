@@ -4,7 +4,6 @@ namespace App\Http\Services\Evaluators;
 
 use App\Jobs\Calculate;
 use App\Jobs\Evaluate;
-use App\Models\History;
 use App\Models\Log;
 use App\Models\Site;
 use App\Models\Subsite;
@@ -22,11 +21,41 @@ class AccessMonitorService
         try {
             DB::beginTransaction();
             if (!is_null($site)) {
-                $response = Http::timeout(120)->get('https://accessmonitor.acessibilidade.gov.pt/api/amp/eval/' . urlencode($site->url));
+                $response = Http::timeout(120)
+                    ->withHeaders([
+                        'Connection' => 'keep-alive',
+                        'sec-ch-ua' => '"Chromium";v="94", "Google Chrome";v="94", ";Not A Brand";v="99"',
+                        'Accept' => 'application/json, text/plain, */*',
+                        'sec-ch-ua-mobile' => '?0',
+                        'User-Agent' => 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.81 Safari/537.36',
+                        'sec-ch-ua-platform' => '"Linux"',
+                        'Sec-Fetch-Site' => 'same-origin',
+                        'Sec-Fetch-Mode' => 'cors',
+                        'Sec-Fetch-Dest' => 'empty',
+                        'Referer' => 'https://accessmonitor.acessibilidade.gov.pt/api/amp/eval/' . urlencode($site->url),
+                        'Accept-Language' => 'pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7',
+                        'Cookie' => '_ga=GA1.3.1325570514.1637323581; _gid=GA1.3.288606120.1637323581'
+                    ])
+                    ->get('https://accessmonitor.acessibilidade.gov.pt/api/amp/eval/' . urlencode($site->url));
             }
 
             if (!is_null($subsite)) {
-                $response = Http::timeout(120)->get('https://accessmonitor.acessibilidade.gov.pt/api/amp/eval/' . urlencode($subsite->url));
+                $response = Http::timeout(120)
+                    ->withHeaders([
+                        'Connection' => 'keep-alive',
+                        'sec-ch-ua' => '"Chromium";v="94", "Google Chrome";v="94", ";Not A Brand";v="99"',
+                        'Accept' => 'application/json, text/plain, */*',
+                        'sec-ch-ua-mobile' => '?0',
+                        'User-Agent' => 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.81 Safari/537.36',
+                        'sec-ch-ua-platform' => '"Linux"',
+                        'Sec-Fetch-Site' => 'same-origin',
+                        'Sec-Fetch-Mode' => 'cors',
+                        'Sec-Fetch-Dest' => 'empty',
+                        'Referer' => 'https://accessmonitor.acessibilidade.gov.pt/api/amp/eval/' . urlencode($subsite->url),
+                        'Accept-Language' => 'pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7',
+                        'Cookie' => '_ga=GA1.3.1325570514.1637323581; _gid=GA1.3.288606120.1637323581'
+                    ])
+                    ->get('https://accessmonitor.acessibilidade.gov.pt/api/amp/eval/' . urlencode($subsite->url));
             }
 
             if (!$response->successful() && isset($response->json()['result']['pagecode'])) {
@@ -96,13 +125,15 @@ class AccessMonitorService
                     $site->history()->firstOrCreate([
                         'score' => (float) $response->json()['result']['data']['score'],
                         'status' => 2,
-                        'average' => $average
+                        'average' => $average,
+                        'date' => Carbon::now()->format('Y-m-d')
                     ]);
                 }else{
                     $history->update([
                         'score' => (float) $response->json()['result']['data']['score'],
                         'status' => 2,
-                        'average' => $average
+                        'average' => $average,
+                        'date' => Carbon::now()->format('Y-m-d')
                     ]);
                 }
             }
@@ -175,10 +206,11 @@ class AccessMonitorService
             ]);
 
             if (!is_null($site)) {
-                $site->history()->create([
+                $site->history()->firstOrCreate([
                     'score' => 0,
                     'average' => 0,
-                    'status' => 3
+                    'status' => 3,
+                    'date' => Carbon::now()->format('Y-m-d')
                 ]);
             }
         }

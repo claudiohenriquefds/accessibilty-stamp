@@ -6,11 +6,11 @@ import {
 } from 'react-router-dom';
 
 import Login from './pages/Login';
-import Register from './pages/Register';
 import Info from './pages/Info';
 import Dashboard from './pages/Dashboard';
 import Home from './pages/Home';
-import Comparative from './pages/Comparative';
+import Register from './pages/Register';
+import FollowUp from './pages/FollowUp';
 
 import { isAuthenticated } from './services/auth';
 
@@ -29,7 +29,7 @@ const Routes = () => (
         <BrowserRouter>
             <Switch>
                 <Route path="/" exact component={Home} />
-                <Route path="/comparative/gov" exact component={Comparative} />
+                <Route path="/followup" exact component={FollowUp} />
                 <Route path="/login" exact component={Login} />
                 <Route path="/register" exact component={Register} />
                 <Route path="/info/:id" exact component={Info} />

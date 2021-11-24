@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\DataController;
 use App\Http\Controllers\Api\HistoryController;
 use App\Http\Controllers\Api\SiteController;
@@ -15,9 +16,18 @@ Route::post('/register', [UserController::class, 'doRegister']);
 Route::get('/stamp', [StampController::class, 'show'])->middleware('cors');
 Route::get('/stamp/info/{site_id}', [StampController::class, 'info']);
 
-Route::get('/comparative/gov', [DataController::class, 'comparativeGov']);
+Route::get('/followup/{category_id}', [DataController::class, 'followUp']);
+Route::get('category/list', [CategoryController::class, 'list']);
 
 Route::group(['middleware' => ['auth:sanctum']], function(){
+    Route::group(['prefix' => 'category'], function(){
+        Route::get('/', [CategoryController::class, 'index']);
+        Route::post('/', [CategoryController::class, 'store']);
+        Route::get('/{id}', [CategoryController::class, 'show']);
+        Route::put('/{id}', [CategoryController::class, 'update']);
+        Route::delete('/{id}', [CategoryController::class, 'delete']);
+    });
+
     Route::group(['prefix' => 'site'], function(){
         Route::post('/', [SiteController::class, 'store']);
         Route::get('/', [SiteController::class, 'index']);

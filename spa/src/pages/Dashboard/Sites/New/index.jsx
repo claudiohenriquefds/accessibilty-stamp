@@ -9,7 +9,7 @@ import spinner from '../../../../assets/Spinner.svg';
 const NewSite = () => {
     const [name, setName] = useState(null);
     const [url, setUrl] = useState(null);
-    const [type, setType] = useState(null);
+    const [category, setCategory] = useState(null);
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState({ error: false });
@@ -22,7 +22,7 @@ const NewSite = () => {
 
         try {
             if (name !== null || url !== null) {
-                api.post('site', { name, url, type })
+                api.post('site', { name, url, category_id:category })
                     .then((response) => {
                         if (response.data.success) {
                             history.push('/dashboard/sites');
@@ -116,12 +116,12 @@ const NewSite = () => {
                                                 id="type"
                                                 name="type"
                                                 autoComplete="type-name"
-                                                value={categories}
-                                                onChange={(e) => setType(e.target.value)}
+                                                value={category}
+                                                onChange={(e) => setCategory(e.target.value)}
                                                 className="mt-1 block w-full py-2 px-3 border focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 bg-white rounded-md shadow-sm focus:outline-none sm:text-sm"
                                             >
-                                                {categories.map((category) => (
-                                                    <option value={category.id}>{category.name}</option>
+                                                {categories.map((categorySite) => (
+                                                    <option value={categorySite.id}>{categorySite.name}</option>
                                                 ))}
                                             </select>
                                         </div>

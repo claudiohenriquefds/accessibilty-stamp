@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 
 import Navbar from '../../../../components/Navbar';
@@ -6,11 +6,8 @@ import api from '../../../../services/api';
 import { logout } from '../../../../services/auth';
 import spinner from '../../../../assets/Spinner.svg';
 
-const NewSite = () => {
+const NewCategory = () => {
     const [name, setName] = useState(null);
-    const [url, setUrl] = useState(null);
-    const [type, setType] = useState(null);
-    const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState({ error: false });
 
@@ -21,13 +18,13 @@ const NewSite = () => {
         setLoading(true);
 
         try {
-            if (name !== null || url !== null) {
-                api.post('site', { name, url, type })
+            if (name !== null) {
+                api.post('category', { name })
                     .then((response) => {
                         if (response.data.success) {
-                            history.push('/dashboard/sites');
+                            history.push('/dashboard/category');
                         } else {
-                            setError({ error: true, message: 'Falha ao registrar site' });
+                            setError({ error: true, message: 'Falha ao registrar categoria' });
                             setLoading(false);
                         }
                     })
@@ -45,22 +42,9 @@ const NewSite = () => {
         }
     }
 
-    useEffect(() => {
-        api.get('category')
-            .then((response) => {
-                if (response.data.success) {
-                    setCategories(response.data.data);
-                }
-            })
-            .catch((err) => {
-                console.log(err);
-                logout(history);
-        });
-    }, []);
-
     return (
         <>
-            <Navbar current="sites" endpoint="site" />
+            <Navbar current="category" endpoint="category" />
             <div className="grid grid-cols-1 md:grid-cols-1">
                 <div className="flex flex-col m-3">
                     <div className="mt-5 md:mt-0 md:col-span-2">
@@ -76,54 +60,16 @@ const NewSite = () => {
                                                 htmlFor="name"
                                                 className="block text-sm font-medium text-gray-700"
                                             >
-                                                Nome do site *
+                                                Nome da categoria *
                                             </label>
                                             <input
                                                 id="name"
                                                 type="text"
-                                                placeholder="Ex: Stamp Acessibility"
+                                                placeholder="Ex: Administração pública"
                                                 className="mt-1 ring-2 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md p-3 outline-none"
                                                 value={name}
                                                 onChange={(e) => setName(e.target.value)}
                                             />
-                                        </div>
-
-                                        <div className="col-span-6 sm:col-span-3">
-                                            <label
-                                                htmlFor="id"
-                                                className="block text-sm font-medium text-gray-700"
-                                            >
-                                                Url do site *
-                                            </label>
-                                            <input
-                                                id="url"
-                                                type="text"
-                                                placeholder="Ex: http://acessibility-stamp.vercel.app"
-                                                className="mt-1 ring-2 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md p-3 outline-none"
-                                                value={url}
-                                                onChange={(e) => setUrl(e.target.value)}
-                                            />
-                                        </div>
-
-                                        <div className="col-span-6 sm:col-span-3">
-                                            <label
-                                                htmlFor="id"
-                                                className="block text-sm font-medium text-gray-700"
-                                            >
-                                                Categoria do site *
-                                            </label>
-                                            <select
-                                                id="type"
-                                                name="type"
-                                                autoComplete="type-name"
-                                                value={categories}
-                                                onChange={(e) => setType(e.target.value)}
-                                                className="mt-1 block w-full py-2 px-3 border focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 bg-white rounded-md shadow-sm focus:outline-none sm:text-sm"
-                                            >
-                                                {categories.map((category) => (
-                                                    <option value={category.id}>{category.name}</option>
-                                                ))}
-                                            </select>
                                         </div>
                                     </div>
                                 </div>
@@ -153,7 +99,7 @@ const NewSite = () => {
                                         )}
                                     </button>
                                     <Link
-                                        to="/dashboard/sites"
+                                        to="/dashboard/category"
                                         className="flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-800 m-2"
                                     >
                                         Cancelar
@@ -168,4 +114,4 @@ const NewSite = () => {
     );
 };
 
-export default NewSite;
+export default NewCategory;

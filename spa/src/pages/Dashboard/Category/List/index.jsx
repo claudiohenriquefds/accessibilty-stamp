@@ -2,7 +2,7 @@
 import React, { useState, useEffect, Fragment, useRef } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 
-import { TrashIcon, ExclamationIcon, PlusIcon } from '@heroicons/react/outline';
+import { TrashIcon, ExclamationIcon, PencilIcon, PlusIcon } from '@heroicons/react/outline';
 
 import { Link, useHistory } from 'react-router-dom';
 import api from '../../../../services/api';
@@ -10,36 +10,32 @@ import { logout } from '../../../../services/auth';
 
 import Navbar from '../../../../components/Navbar';
 
-const Site = () => {
-    const [sites, setSites] = useState([]);
+const Category = () => {
+    const [categories, setCategories] = useState([]);
     const history = useHistory();
 
     const [open, setOpen] = useState(false);
-    const [siteDelete, setSiteDelete] = useState();
+    const [categoryDelete, setCategoryDelete] = useState();
 
     const cancelButtonRef = useRef(null);
 
-    async function getSites() {
-        const sitesArray = [];
-        api.get('site')
+    async function getCategories() {
+        const categoryArray = [];
+        api.get('category')
             .then((response) => {
                 if (response.data.success) {
                     const { data } = response.data;
                     // eslint-disable-next-line array-callback-return
                     data.map((element) => {
-                        sitesArray.push({
+                        categoryArray.push({
                             id: element.id,
                             name: element.name,
-                            last_score: element.last_score,
-                            grade_average: element.average,
-                            pages: element.pages,
-                            url: element.url,
-                            stamp: element.stamp,
+                            count_sites: element.count_sites
                         });
                     });
                 }
 
-                setSites(sitesArray);
+                setCategories(categoryArray);
             })
             .catch((err) => {
                 console.log(err);
@@ -47,8 +43,8 @@ const Site = () => {
             });
     }
 
-    async function deleteSite() {
-        api.delete(`site/${siteDelete}`)
+    async function deleteCategory() {
+        api.delete(`category/${categoryDelete}`)
             .then(() => {
                 window.location.reload();
             })
@@ -59,7 +55,7 @@ const Site = () => {
     }
 
     useEffect(() => {
-        getSites();
+        getCategories();
     }, []);
 
     return (
@@ -113,11 +109,11 @@ const Site = () => {
                                                 as="h3"
                                                 className="text-lg leading-6 font-medium text-gray-900"
                                             >
-                                                Remoção de site
+                                                Remoção de categoria
                                             </Dialog.Title>
                                             <div className="mt-2">
                                                 <p className="text-sm text-gray-500">
-                                                    Você tem certeza que deseja remover esse site? Todos os dados serão removidos. Essa ação não poderá ser desfeita.
+                                                    Você tem certeza que deseja remover essa categoria? Todos os dados serão removidos (Incluindo dados de sites e sites). Essa ação não poderá ser desfeita.
                                                 </p>
                                             </div>
                                         </div>
@@ -129,7 +125,7 @@ const Site = () => {
                                         className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm"
                                         onClick={() => {
                                             setOpen(false)
-                                            deleteSite(siteDelete)
+                                            deleteCategory(categoryDelete)
                                         }}
                                     >
                                         Deletar
@@ -148,19 +144,19 @@ const Site = () => {
                     </div>
                 </Dialog>
             </Transition.Root>
-            <Navbar current="sites" endpoint="site" />
+            <Navbar current="category" endpoint="category" />
             <div className="grid grid-cols-1 md:grid-cols-1">
                 <div className="flex flex-col m-3">
                     <div className="w-full flex flex-row-reverse">
                         <Link
-                            to="/dashboard/sites/new"
+                            to="/dashboard/category/new"
                             className="flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-800 my-2"
                         >
                             <PlusIcon
                                 className="h-5 w-5 mr-2 text-white outline-none"
                                 aria-hidden="true"
                             />
-                            Novo site
+                            Nova Categoria
                         </Link>
                     </div>
                     <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
@@ -179,88 +175,51 @@ const Site = () => {
                                                 scope="col"
                                                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                                             >
-                                                Ultima nota (Página principal)
+                                                Sites relacionados
                                             </th>
                                             <th
                                                 scope="col"
                                                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                                             >
-                                                Média de nota (Todas as páginas encontradas)
+                                                Editar
                                             </th>
                                             <th
                                                 scope="col"
-                                                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                                className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider"
                                             >
-                                                Páginas
-                                            </th>
-                                            <th
-                                                scope="col"
-                                                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                                            >
-                                                Indicadores
-                                            </th>
-                                            <th
-                                                scope="col"
-                                                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                                            >
-                                                Selo
+                                                Apagar
                                             </th>
                                         </tr>
                                     </thead>
                                     <tbody className="bg-white divide-y divide-gray-200">
-                                        {sites.map((site) => (
-                                            <tr key={site.url}>
+                                        {categories.map((category) => (
+                                            <tr key={category.id}>
                                                 <td className="px-6 py-4 whitespace-nowrap">
-                                                    <div className="flex items-center">
-                                                        <div className="ml-4">
-                                                            <div className="text-sm font-medium text-gray-900">
-                                                                {site.name}
-                                                            </div>
-                                                            <div className="text-sm text-gray-500">
-                                                                {site.url}
-                                                            </div>
-                                                        </div>
+                                                    <div className="text-sm text-gray-900">
+                                                        {category.name}
                                                     </div>
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap">
                                                     <div className="text-sm text-gray-900">
-                                                        {site.last_score}
+                                                        {category.count_sites}
                                                     </div>
                                                 </td>
-                                                <td className="px-6 py-4 whitespace-nowrap">
-                                                    <div className="text-sm text-gray-900">
-                                                        {site.grade_average}
-                                                    </div>
+                                                <td className="px-6 py-4 whitespace-nowrap text-left text-sm font-medium">
+                                                    <Link
+                                                        to={`/dashboard/category/edit/${category.id}`}
+                                                    >
+                                                        <PencilIcon
+                                                            className="h-5 w-5 hover:text-indigo-500 outline-none"
+                                                            aria-hidden="true"
+                                                        />
+                                                    </Link>
                                                 </td>
-                                                <td className="px-6 py-4 whitespace-nowrap">
-                                                    <div className="text-sm text-gray-900">
-                                                        {site.pages}
-                                                    </div>
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap">
-                                                    <div className="text-sm text-gray-900">
-                                                        <Link
-                                                            to={`sites/details/${site.id}`}
-                                                            className="flex items-center justify-center px-4 py-2 border border-gray-400 rounded-md shadow-sm text-sm font-medium text-gray-600 bg-gray-200 hover:bg-gray-300"
-                                                        >
-                                                            Detalhar
-                                                        </Link>
-                                                    </div>
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                                    <div
-                                                        className="flex-shrink-0"
-                                                        dangerouslySetInnerHTML={{
-                                                            __html: site.stamp,
-                                                        }}
-                                                    />
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                                <td className="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
                                                     <button
                                                         type="button"
-                                                        value={siteDelete}
+                                                        value={categoryDelete}
                                                         onClick={() => {
-                                                            setSiteDelete(site.id);
+                                                            setCategoryDelete(category.id);
                                                             setOpen(true);
                                                         }}
                                                     >
@@ -283,4 +242,4 @@ const Site = () => {
     );
 };
 
-export default Site;
+export default Category;

@@ -16,9 +16,9 @@ class CreateSitesTable extends Migration
         Schema::create('sites', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('category_id');
             $table->string('name', 100);
             $table->text('url');
-            $table->integer('type');
             $table->integer('validations')->nullable()->default(0);
             $table->decimal('last_score')->nullable();
             $table->decimal('average')->nullable();
@@ -27,6 +27,7 @@ class CreateSitesTable extends Migration
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
         });
     }
 

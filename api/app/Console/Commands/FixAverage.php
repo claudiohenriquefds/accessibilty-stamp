@@ -14,7 +14,7 @@ class FixAverage extends Command
      *
      * @var string
      */
-    protected $signature = 'fix:average {--site= : The ID of site} {--type= : The type of site} {--date= : The date of corretion}';
+    protected $signature = 'fix:average {--site= : The ID of site} {--category= : The ID of category of site} {--date= : The date of corretion}';
 
     /**
      * The console command description.
@@ -53,8 +53,8 @@ class FixAverage extends Command
                 dump("This site have a average of: ".$average);
             }
 
-            if($this->option("type")){
-                foreach(Site::where('type', $this->option('type'))->get() as $site){
+            if($this->option("category")){
+                foreach(Site::where('category', $this->option('category'))->get() as $site){
                     $last_score_site = $site->last_score;
                     $cont_average = $site->subsites()->where('last_score', '!=', 'NULL')->count() + 1;
                     $sum = $site->subsites()->where('last_score', '!=', 'NULL')->sum('last_score') + $last_score_site;

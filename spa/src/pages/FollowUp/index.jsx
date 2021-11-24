@@ -23,13 +23,18 @@ function classNames(...classes) {
     return classes.filter(Boolean).join(' ');
 }
 
-const Comparative = () => {
+const FollowUp = () => {
     const [sites, setSites] = useState(null);
+    const [categories, setCategories] = useState(null);
+    const [category, setCategory] = useState(null);
     const [loading, setLoading] = useState(true);
     const history = useHistory();
 
-    useEffect(async () => {
-        api.get('comparative/gov')
+    function getData(id){
+        setSites(null);
+        setLoading(true);
+        setCategory(id);
+        api.get(`followup/${id}`)
             .then((response) => {
                 if (response.data.success) {
                     setSites(response.data.data);
@@ -42,6 +47,20 @@ const Comparative = () => {
                 console.log(err);
                 logout(history);
             });
+    }
+
+    useEffect(async () => {
+        api.get('category/list')
+            .then((response) => {
+                if (response.data.success) {
+                    setCategories(response.data.data);
+                }
+            })
+            .catch((err) => {
+                console.log(err);
+                logout(history);
+            });
+       getData(1);
     }, []);
 
     const seriesAverage = [];
@@ -50,7 +69,7 @@ const Comparative = () => {
     const dates = [];
     let state;
     let stateAverage;
-    if (sites !== null) {
+    if (sites !== null && sites.comparative !== null && sites.average !== null) {
         sites.comparative.map((site) => {
             const data = [];
             site.data.map((scores) => {
@@ -132,7 +151,7 @@ const Comparative = () => {
 
     return (
         <>
-            {sites !== null ? (
+            {sites !== null && sites.comparative !== null && sites.average !== null ? (
                 <div className="min-h-full">
                     <Disclosure as="nav" className="bg-gray-800">
                         {({ open }) => (
@@ -215,15 +234,28 @@ const Comparative = () => {
                     </Disclosure>
 
                     <header className="bg-white shadow">
-                        <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                            <h1 className="text-3xl font-normal text-gray-900">
-                                Acompanhamento de portais e sitios eletrônicos de administração publica
+                        <div className="flex max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                            <h1 className="text-1xl font-normal text-gray-900">
+                                Acompanhamento da avaliação dos ultimos 30 dias
                             </h1>
+                            <select
+                                id="type"
+                                name="type"
+                                autoComplete="type-name"
+                                value={category}
+                                onChange={(e) => getData(e.target.value)}
+                                className="mt-1 block w-full py-2 px-3 border focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 bg-white rounded-md shadow-sm focus:outline-none sm:text-sm"
+                            >
+                                {
+                                    categories.map((categorySite) => (
+                                        <option value={categorySite.id}>{categorySite.name}</option>
+                                    ))
+                                }
+                            </select>
                         </div>
                     </header>
                     <main>
                         <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-                            {/* Replace with your content */}
                             <div className="grid grid-cols-1 gap-4">
                                 <div className="">
                                     <h1 className="text-2xl font-light text-gray-900">
@@ -340,7 +372,6 @@ const Comparative = () => {
                                     </div>
                                 </div>
                             </div>
-                            {/* /End replace */}
                         </div>
                     </main>
                 </div>
@@ -364,7 +395,7 @@ const Comparative = () => {
                                         alt="Logotipo do Acessibility Stamp, contendo o icone de uma pessoa entre dois parenteses angulares (Exemplificação de TAG HTML)"
                                     />
                                     <h2 className="mt-6 text-center text-3xl font-medium text-gray-900">
-                                        Portais e sitios eletrônicos de administração publica não foram encontrados.
+                                        Dados para essa categoria não foram encontrados.
                                     </h2>
                                     <a
                                         className="flex justify-center align-middle text-indigo-500 group-hover:text-indigo-600"
@@ -383,4 +414,4 @@ const Comparative = () => {
         </>
     );
 };
-export default Comparative;
+export default FollowUp;

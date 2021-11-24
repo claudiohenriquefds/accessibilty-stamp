@@ -18,7 +18,7 @@ import './style.css';
 
 const navigation = [
     { name: 'Selo', href: '#stamp', animate: false},
-    { name: 'Comparativo GOV', href: '/comparative/gov', animate: true},
+    { name: 'Acompanhamento de avaliações', href: '/followup', animate: true},
 ];
 
 const features = [
@@ -97,14 +97,14 @@ const Home = () => (
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className="hidden md:block md:ml-10 md:pr-4 md:space-x-8">
+                                        <div className="hidden md:block pl-4 md:space-x-4">
                                             {navigation.map((item) => (
                                                 <a
                                                     key={item.name}
                                                     href={item.href}
                                                     className="font-medium text-gray-500 hover:text-gray-900"
                                                 >
-                                                    <span className={item.animate ? `animate-pulse bg-gray-100 shadow-lg rounded-full p-2` : null}>{item.name}</span>
+                                                    <span className={item.animate ? `animate-pulse bg-indigo-500 text-white shadow-lg rounded-full p-2` : null}>{item.name}</span>
                                                 </a>
                                             ))}
                                             {isAuthenticated() ? (

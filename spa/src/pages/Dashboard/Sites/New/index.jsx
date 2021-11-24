@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 
 import Navbar from '../../../../components/Navbar';
@@ -10,6 +10,7 @@ const NewSite = () => {
     const [name, setName] = useState(null);
     const [url, setUrl] = useState(null);
     const [type, setType] = useState(null);
+    const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState({ error: false });
 
@@ -43,6 +44,19 @@ const NewSite = () => {
             setLoading(false);
         }
     }
+
+    useEffect(() => {
+        api.get('category')
+            .then((response) => {
+                if (response.data.success) {
+                    setCategories(response.data.data);
+                }
+            })
+            .catch((err) => {
+                console.log(err);
+                logout(history);
+        });
+    }, []);
 
     return (
         <>
@@ -96,19 +110,19 @@ const NewSite = () => {
                                                 htmlFor="id"
                                                 className="block text-sm font-medium text-gray-700"
                                             >
-                                                Tipo do site *
+                                                Categoria do site *
                                             </label>
                                             <select
                                                 id="type"
                                                 name="type"
                                                 autoComplete="type-name"
-                                                value={type}
+                                                value={categories}
                                                 onChange={(e) => setType(e.target.value)}
                                                 className="mt-1 block w-full py-2 px-3 border focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 bg-white rounded-md shadow-sm focus:outline-none sm:text-sm"
                                             >
-                                                <option value="1">Administração publica</option>
-                                                <option value="2">Administração privada</option>
-                                                <option value="3">Outro</option>
+                                                {categories.map((category) => (
+                                                    <option value={category.id}>{category.name}</option>
+                                                ))}
                                             </select>
                                         </div>
                                     </div>

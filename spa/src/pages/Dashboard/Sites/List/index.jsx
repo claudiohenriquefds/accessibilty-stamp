@@ -2,7 +2,7 @@
 import React, { useState, useEffect, Fragment, useRef } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 
-import { TrashIcon, ExclamationIcon } from '@heroicons/react/outline';
+import { TrashIcon, ExclamationIcon, PlusIcon } from '@heroicons/react/outline';
 
 import { Link, useHistory } from 'react-router-dom';
 import api from '../../../../services/api';
@@ -156,6 +156,10 @@ const Site = () => {
                             to="/dashboard/sites/new"
                             className="flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-800 my-2"
                         >
+                            <PlusIcon
+                                className="h-5 w-5 mr-2 text-white outline-none"
+                                aria-hidden="true"
+                            />
                             Novo site
                         </Link>
                     </div>

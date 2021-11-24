@@ -26,6 +26,7 @@ const Navbar = ({ current, filter, search, endpoint}) => {
         { name: 'Painel', href: `/dashboard/panel`, current: current === 'panel' },
         { name: 'Histórico', href: `/dashboard/history`, current: current === 'history' },
         { name: 'Sites', href: '/dashboard/sites', current: current === 'sites' },
+        { name: 'Categorias', href: '/dashboard/category', current: current === 'category' },
     ];
 
     function classNames(...classes) {

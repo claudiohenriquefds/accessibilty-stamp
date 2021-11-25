@@ -66,18 +66,13 @@ const FollowUp = () => {
     const seriesAverage = [];
     const series = [];
     const datesAverage = [];
-    const dates = [];
     let state;
     let stateAverage;
     if (sites !== null && sites.comparative !== null && sites.average !== null) {
         sites.comparative.map((site) => {
             const data = [];
             site.data.map((scores) => {
-                data.push(scores.average);
-            });
-
-            site.data.map((scores) => {
-                dates.push(scores.date);
+                data.push({x:scores.date, y:scores.average});
             });
 
             series.push({
@@ -114,7 +109,6 @@ const FollowUp = () => {
                 },
                 xaxis: {
                     type: 'datetime',
-                    categories: dates,
                 },
                 tooltip: {
                     x: {

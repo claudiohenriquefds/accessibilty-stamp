@@ -55,8 +55,8 @@ class DataController extends Controller
                     $site->created_at = $site->history()->orderBy('id', 'desc')->first()->created_at ?? null;
                     $site->pages = $site->subsites()->count();
                     $site->stamp = (new StampController())->show($site, request());
-                    $site->data = $site->history()->whereMonth('created_at', Carbon::now()->format('m'))->select('created_at as date', 'average', 'score as last_score', 'status')->get()->toArray() ?? [];
-                    $site->dates = $site->history()->whereMonth('created_at', Carbon::now()->format('m'))->select('created_at as date')->get()->toArray() ?? [];
+                    $site->data = $site->history()->orderBy('histories.created_at', 'DESC')->limit(30)->select('created_at as date', 'average', 'score as last_score', 'status')->get()->toArray() ?? [];
+                    $site->dates = $site->history()->orderBy('histories.created_at', 'DESC')->limit(30)->select('created_at as date')->get()->toArray() ?? [];
                 });
 
                 $sitesAverage = History::join('sites as s', 's.id', '=', 'histories.site_id')

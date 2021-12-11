@@ -348,7 +348,7 @@ const Home = () => (
                                                         </span>
                                                         <span className="token punctuation">"</span>
                                                         <span className="code-highlight bg-code-highlight">
-                                                            http://localhost:8000/api/script.min.js
+                                                            {process.env.REACT_APP_ENDPOINT_SCRIPT}
                                                         </span>
                                                         <span className="token punctuation">"</span>
                                                     </span>

@@ -3,8 +3,7 @@ import axios from 'axios';
 import { getToken } from './auth';
 
 const api = axios.create({
-    baseURL: 'http://localhost:8000/api',
-    // baseURL: 'https://77ba-168-90-219-232.ngrok.io',
+    baseURL: process.env.REACT_APP_ENDPOINT_API,
 });
 
 api.interceptors.request.use(async (config) => {

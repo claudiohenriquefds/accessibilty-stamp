@@ -28,6 +28,7 @@ module.exports = {
     'react/prop-types': ['off'],
     'no-return-assign': ['off'],
     'react/jsx-no-bind': ['off'],
-    "import/no-unresolved": "off"
+    "import/no-unresolved": "off",
+    "react/no-danger": "off"
   },
 };
